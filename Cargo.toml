@@ -7,6 +7,7 @@ repository = "https://github.com/solarpx/ethers-abirpc"
 homepage = "https://github.com/solarpx/ethers-abirpc"
 categories = ["cryptography::cryptocurrencies"]
 keywords = ["crypto", "ethers", "ethereum", "web3", "celo"]
+description = "ethers-rs provider encapsulation for ethereum smart contrcats"
 
 [dependencies]
 tokio = { version = "1.29.1", features = ["full"] }
