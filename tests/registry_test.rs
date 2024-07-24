@@ -1,0 +1,90 @@
+use ethers_abirpc::{
+    abi::token::Erc20Token::{Erc20TokenRegistry, TransferFilter},
+    address_from,
+    network::Network,
+    registry::AbiRegistryTrait,
+};
+
+use ethers::{
+    providers::{Http, MockProvider, RetryClient, Ws},
+    types::{Address, BlockNumber},
+};
+use url::Url;
+
+const TEST_ETHEREUM_WS_PROVIDER: &str = "wss://ethereum-rpc.publicnode.com";
+const TEST_ETHEREUM_HTTP_PROVIDER: &str = "https://ethereum.publicnode.com";
+
+const TEST_NETWORK: Network = Network::ETHEREUM;
+const TEST_ADDRESS: &str = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"; // WETH
+
+#[tokio::test]
+async fn test_ws() -> Result<(), Box<dyn std::error::Error>> {
+    let url = Url::parse(TEST_ETHEREUM_WS_PROVIDER)?;
+    let registry = Erc20TokenRegistry::<Ws>::new(Some(url), Some(TEST_NETWORK));
+    let provider = registry.provider().await?;
+    let instance = registry.register(provider, address_from!(TEST_ADDRESS)?);
+
+    println!("Ws: {:?}", instance.decimals().await?);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_http() -> Result<(), Box<dyn std::error::Error>> {
+    let url = Url::parse(TEST_ETHEREUM_HTTP_PROVIDER)?;
+    let registry = Erc20TokenRegistry::<Http>::new(Some(url), Some(TEST_NETWORK));
+    let provider = registry.provider().await?;
+    let instance = registry.register(provider, address_from!(TEST_ADDRESS)?);
+
+    println!("Http: {:?}", instance.decimals().await?);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_retry_client() -> Result<(), Box<dyn std::error::Error>> {
+    let url = Url::parse(TEST_ETHEREUM_HTTP_PROVIDER)?;
+    let registry = Erc20TokenRegistry::<RetryClient<Http>>::new(Some(url), Some(TEST_NETWORK));
+    let provider = registry.provider().await?;
+    let instance = registry.register(provider, address_from!(TEST_ADDRESS)?);
+
+    println!("RetryClient: {:?}", instance.decimals().await?);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_mock_provider() -> Result<(), Box<dyn std::error::Error>> {
+    let registry = Erc20TokenRegistry::<MockProvider>::new(None, None);
+    let provider = registry.provider().await?;
+    let instance = registry.register(provider, address_from!(TEST_ADDRESS)?);
+
+    println!("MockProvider: {:?}", instance.decimals().value(0_u64).tx);
+
+    Ok(())
+}
+
+async fn get_logs<E>() -> Result<(), Box<dyn std::error::Error>>
+where
+    E: ethers::prelude::EthEvent + std::fmt::Debug,
+{
+    let url = Url::parse(TEST_ETHEREUM_WS_PROVIDER)?;
+    let registry = Erc20TokenRegistry::<Ws>::new(Some(url.clone()), Some(TEST_NETWORK));
+    let provider = registry.provider().await?;
+    let instance = registry.register(provider, address_from!(TEST_ADDRESS)?);
+
+    let logs = instance
+        .get_logs::<E>(BlockNumber::Latest, BlockNumber::Latest)
+        .await?;
+
+    println!("Logs: {:?}", logs);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_logs() -> Result<(), Box<dyn std::error::Error>> {
+    get_logs::<TransferFilter>().await?;
+
+    Ok(())
+}
