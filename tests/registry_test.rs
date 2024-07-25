@@ -1,15 +1,7 @@
-use ethers_abirpc::{
-    abi::token::Erc20Token::{Erc20TokenRegistry, TransferFilter},
-    address_from,
-    network::Network,
-    registry::AbiRegistryTrait,
-};
+use ethers_abirpc::{abirpc, address_from};
 
-use ethers::{
-    providers::{Http, MockProvider, RetryClient, Ws},
-    types::{Address, BlockNumber},
-};
-use url::Url;
+abigen!(Erc20Token, "./tests/abi/Erc20Token.abi");
+abirpc!(Erc20Token, Erc20TokenRegistry);
 
 const TEST_ETHEREUM_WS_PROVIDER: &str = "wss://ethereum-rpc.publicnode.com";
 const TEST_ETHEREUM_HTTP_PROVIDER: &str = "https://ethereum.publicnode.com";

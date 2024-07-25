@@ -23,7 +23,7 @@ where
 pub struct AbiRegistry<C> {
     pub url: Option<Url>,
     pub network: Option<Network>,
-    pub(crate) registry: Arc<RwLock<HashMap<Address, C>>>,
+    pub registry: Arc<RwLock<HashMap<Address, C>>>,
 }
 
 impl<C> AbiRegistry<C> {
@@ -35,7 +35,7 @@ impl<C> AbiRegistry<C> {
         }
     }
 
-    pub(crate) fn entry_exists(&self, address: Address) -> bool {
+    pub fn entry_exists(&self, address: Address) -> bool {
         let arc_clone = Arc::clone(&self.registry);
         let registry = arc_clone.read().expect("Registry RwLock poisoned!");
         let entry_exists = registry.contains_key(&address);
@@ -44,7 +44,7 @@ impl<C> AbiRegistry<C> {
         entry_exists
     }
 
-    pub(crate) fn add_entry(&self, address: Address, contract: C) {
+    pub fn add_entry(&self, address: Address, contract: C) {
         let arc_clone = Arc::clone(&self.registry);
         let mut registry = arc_clone.write().expect("Registry RwLock poisoned!");
         registry.insert(address, contract);
@@ -55,6 +55,29 @@ impl<C> AbiRegistry<C> {
 #[macro_export]
 macro_rules! abirpc {
     ($abi:ident, $abi_registry: ident) => {
+        use async_trait::async_trait;
+        use ethers::{
+            prelude::abigen,
+            providers::{
+                Http, HttpRateLimitRetryPolicy, JsonRpcClient, Middleware, MockProvider, Provider,
+                RetryClient, RetryClientBuilder, Ws,
+            },
+            types::{Address, BlockNumber, Bytes, TransactionReceipt},
+        };
+        use std::time::Duration;
+        use std::{clone::Clone, sync::Arc};
+        use url::Url;
+        use $crate::{
+            error::Error,
+            network::{Network, RetryClientConfig},
+            registry::{AbiRegistry, AbiRegistryTrait},
+        };
+
+        #[derive(Debug)]
+        pub struct $abi_registry<T>(AbiRegistry<Erc20Token<Provider<T>>>)
+        where
+            T: JsonRpcClient;
+
         #[async_trait]
         impl AbiRegistryTrait<Ws> for $abi_registry<Ws> {
             async fn provider(&self) -> Result<Provider<Ws>, Error> {
