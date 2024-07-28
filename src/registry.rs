@@ -21,7 +21,7 @@ where
 
 #[derive(Debug)]
 pub struct AbiRegistry<C> {
-    pub url: Option<::url::Url>,
+    pub url: Option<Url>,
     pub network: Option<Network>,
     pub registry: Arc<RwLock<HashMap<Address, C>>>,
 }

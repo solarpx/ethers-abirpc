@@ -43,7 +43,7 @@ async fn test_http() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn test_retry_client() -> Result<(), Box<dyn std::error::Error>> {
-    let url = url::Url::parse(TEST_ETHEREUM_HTTP_PROVIDER)?;
+    let url = Url::parse(TEST_ETHEREUM_HTTP_PROVIDER)?;
     let registry = Erc20TokenRegistry::<RetryClient<Http>>::new(Some(url), Some(TEST_NETWORK));
     let provider = registry.provider().await?;
     let instance = registry.register(provider, address_from!(TEST_ADDRESS)?);
@@ -66,7 +66,7 @@ async fn test_mock_provider() -> Result<(), Box<dyn std::error::Error>> {
 
 async fn get_logs<E>() -> Result<(), Box<dyn std::error::Error>>
 where
-    E: EthEvent + ::std::fmt::Debug,
+    E: EthEvent + std::fmt::Debug,
 {
     let url = Url::parse(TEST_ETHEREUM_WS_PROVIDER)?;
     let registry = Erc20TokenRegistry::<Ws>::new(Some(url.clone()), Some(TEST_NETWORK));
