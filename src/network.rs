@@ -22,6 +22,9 @@ impl Default for RetryClientConfig {
 pub enum Network {
     ANVIL,
     ETHEREUM,
+    OPTIMISM,
+    ARBITRUM,
+    ChainID(u32),
 }
 
 impl Network {
@@ -29,13 +32,19 @@ impl Network {
         match self {
             Network::ANVIL => 31337,
             Network::ETHEREUM => 1,
+            Network::OPTIMISM => 10,
+            Network::ARBITRUM => 42161,
+            Network::ChainID(chain_id) => *chain_id,
         }
     }
 
     pub fn retry_client_config(&self) -> RetryClientConfig {
         match self {
-            Network::ANVIL => RetryClientConfig::default(),
-            Network::ETHEREUM => RetryClientConfig::default(),
+            Network::ARBITRUM => RetryClientConfig {
+                initial_backoff_ms: 150,
+                ..RetryClientConfig::default()
+            },
+            _ => RetryClientConfig::default(),
         }
     }
 }
