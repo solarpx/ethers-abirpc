@@ -4,18 +4,18 @@ use crate::{
 };
 use async_trait::async_trait;
 use ethers::providers::{
-    Http, HttpRateLimitRetryPolicy, JsonRpcClient, MockProvider, Provider, RetryClient,
+    Http, HttpRateLimitRetryPolicy, Middleware, MockProvider, Provider, RetryClient,
     RetryClientBuilder, Ws,
 };
 use std::time::Duration;
 use url::Url;
 
 #[async_trait]
-pub trait AbiProviderTrait<T>
+pub trait AbiProviderTrait<M>
 where
-    T: JsonRpcClient,
+    M: Middleware,
 {
-    async fn provider(&self) -> Result<Provider<T>, Error>;
+    async fn provider(&self) -> Result<M, Error>;
 }
 
 pub struct AbiProvider {
@@ -30,7 +30,7 @@ impl AbiProvider {
 }
 
 #[async_trait]
-impl AbiProviderTrait<Ws> for AbiProvider {
+impl AbiProviderTrait<Provider<Ws>> for AbiProvider {
     async fn provider(&self) -> Result<Provider<Ws>, Error> {
         match &self.url {
             Some(url) => {
@@ -43,7 +43,7 @@ impl AbiProviderTrait<Ws> for AbiProvider {
 }
 
 #[async_trait]
-impl AbiProviderTrait<Http> for AbiProvider {
+impl AbiProviderTrait<Provider<Http>> for AbiProvider {
     async fn provider(&self) -> Result<Provider<Http>, Error> {
         match &self.url {
             Some(url) => {
@@ -56,7 +56,7 @@ impl AbiProviderTrait<Http> for AbiProvider {
 }
 
 #[async_trait]
-impl AbiProviderTrait<RetryClient<Http>> for AbiProvider {
+impl AbiProviderTrait<Provider<RetryClient<Http>>> for AbiProvider {
     async fn provider(&self) -> Result<Provider<RetryClient<Http>>, Error> {
         match &self.url {
             Some(url) => {
@@ -84,7 +84,7 @@ impl AbiProviderTrait<RetryClient<Http>> for AbiProvider {
 }
 
 #[async_trait]
-impl AbiProviderTrait<MockProvider> for AbiProvider {
+impl AbiProviderTrait<Provider<MockProvider>> for AbiProvider {
     async fn provider(&self) -> Result<Provider<MockProvider>, Error> {
         match &self.url {
             Some(_) => Err(Error::Error(String::from("MockProvider url is not None"))),

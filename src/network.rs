@@ -45,7 +45,7 @@ pub enum Network {
 }
 
 impl Network {
-    pub fn chain_id(&self) -> U256 {
+    pub fn get_chainid(&self) -> U256 {
         match self {
             Network::ETHEREUM => U256::from(1),
             Network::OPTIMISM => U256::from(10),
@@ -74,7 +74,7 @@ impl Network {
     pub fn retry_client_config(&self) -> RetryClientConfig {
         match self {
             Network::ARBITRUM => RetryClientConfig {
-                initial_backoff_ms: 120,
+                initial_backoff_ms: 150,
                 ..RetryClientConfig::default()
             },
             _ => RetryClientConfig::default(),

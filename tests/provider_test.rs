@@ -1,6 +1,5 @@
-use ethers_abirpc::prelude::*;
-
 use ethers::providers::{Http, Middleware, MockProvider, Provider, RetryClient, Ws};
+use ethers_abirpc::prelude::*;
 use url::Url;
 
 const TEST_ETHEREUM_WS_PROVIDER: &str = "wss://ethereum-rpc.publicnode.com";
@@ -17,7 +16,7 @@ async fn test_ws() -> Result<(), Box<dyn std::error::Error>> {
 
     let chain_id = provider.get_chainid().await?;
 
-    assert_eq!(chain_id, TEST_NETWORK.chain_id());
+    assert_eq!(chain_id, TEST_NETWORK.get_chainid());
 
     Ok(())
 }
@@ -31,7 +30,7 @@ async fn test_http() -> Result<(), Box<dyn std::error::Error>> {
 
     let chain_id = provider.get_chainid().await?;
 
-    assert_eq!(chain_id, TEST_NETWORK.chain_id());
+    assert_eq!(chain_id, TEST_NETWORK.get_chainid());
 
     Ok(())
 }
@@ -45,7 +44,7 @@ async fn test_retry_client() -> Result<(), Box<dyn std::error::Error>> {
 
     let chain_id = provider.get_chainid().await?;
 
-    assert_eq!(chain_id, TEST_NETWORK.chain_id());
+    assert_eq!(chain_id, TEST_NETWORK.get_chainid());
 
     Ok(())
 }
