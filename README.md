@@ -12,9 +12,7 @@ MockProvider
 The `abirpc!` macro is implemented as an extension of ethers-rs `abigen!`. `abirpc!` generates an API to manage deployed contract instances, and `abigen!` provides the rust bindings for the contract ABI. 
 
 ```rust
-use ethers::prelude::abigen;
-use ethers_abirpc::abirpc;
-
+use ethers_abirpc::prelude::*;
 abigen!(Erc20Token, "./tests/abi/Erc20Token.abi"); // Path to abi (json)
 abirpc!(Erc20Token, Erc20TokenRegistry);
 
