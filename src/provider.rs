@@ -23,6 +23,12 @@ pub struct AbiProvider {
     pub network: Option<Network>,
 }
 
+impl AbiProvider {
+    pub fn new(url: Option<Url>, network: Option<Network>) -> Self {
+        Self { url, network }
+    }
+}
+
 #[async_trait]
 impl AbiProviderTrait<Ws> for AbiProvider {
     async fn provider(&self) -> Result<Provider<Ws>, Error> {
