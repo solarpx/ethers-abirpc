@@ -17,6 +17,18 @@ async fn test_ws() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[tokio::test]
+async fn test_ws_wrong_url() -> Result<(), Box<dyn std::error::Error>> {
+    let url = Url::parse(TEST_HTTP_PROVIDER)?;
+    let provider: Result<Provider<Ws>, _> = AbiProvider::new(Some(url), Some(TEST_NETWORK))
+        .provider()
+        .await;
+
+    assert!(provider.is_err());
+
+    Ok(())
+}
+
+#[tokio::test]
 async fn test_ws_wrong_chain_id() -> Result<(), Box<dyn std::error::Error>> {
     let url = Url::parse(TEST_WS_PROVIDER)?;
     let provider: Result<Provider<Ws>, _> = AbiProvider::new(Some(url), Some(Network::ChainId(10)))

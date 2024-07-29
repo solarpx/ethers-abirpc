@@ -10,7 +10,7 @@ pub enum Error {
     ChainIdError(String),
     #[error("Error: {0}")]
     Error(String),
-    #[error("Middleware error: {0}")]
+    #[error("Provider error: {0}")]
     ProviderError(#[from] ethers::providers::ProviderError),
     #[error("Url parse Error: {0}")]
     UrlParseError(#[from] url::ParseError),

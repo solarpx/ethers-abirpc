@@ -32,16 +32,12 @@ impl AbiProvider {
 macro_rules! assert_chain_id {
     ($network: expr, $provider: expr) => {
         if let Some(network) = $network {
-            let chain_id = match $provider.get_chainid().await {
-                Ok(chain_id) => chain_id,
-                Err(e) => return Err(Error::Error(e.to_string())),
-            };
-
+            let chain_id = $provider.get_chainid().await?;
             if network.get_chainid() != chain_id {
                 let e = format!(
-                    "Configured chain_id {} does not match on-chain value {}",
-                    chain_id,
-                    network.get_chainid()
+                    "Configured chain_id ({}) does not match network ({})",
+                    network.get_chainid(),
+                    chain_id
                 );
                 return Err(Error::ChainIdError(e));
             }

@@ -1,12 +1,12 @@
 # ethers-abirpc
 
-This library defines the `abirpc!` macro for ethers-rs provider encapsulation. The following ethers-rs provider types are supported 
+This library defines the `abirpc!` macro along with several other utilites for ethers-rs provider encapsulation. The following ethers-rs provider types are supported
 
 ```rust
-Ws
-Http
-RetryClient<Http>
-MockProvider
+Provider<Ws>
+Provider<Http>
+Provider<RetryClient<Http>>
+Provider<MockProvider>
 ```
 
 The `abirpc!` macro is implemented as an extension of ethers-rs `abigen!`. `abirpc!` generates an API to manage deployed contract instances, and `abigen!` provides the rust bindings for the contract ABI. 
@@ -35,4 +35,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+```
+
+The crate also includes wrappers for direct initialization of supported ethers-rs providers. This can be helpful for interacting with ethers-rs primitives and middleware. 
+
+```rust
+let url = Url::parse("wss://ethereum-rpc.publicnode.com")?;
+let provider: Provider<Ws> = AbiProvider::new(Some(url), Some(Network::ChainId(1)))
+    .provider()
+    .await?;
+
+let _ = provider.get_chainid().await?;
 ```
