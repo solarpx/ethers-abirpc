@@ -29,12 +29,33 @@ impl AbiProvider {
     }
 }
 
+macro_rules! assert_chain_id {
+    ($network: expr, $provider: expr) => {
+        if let Some(network) = $network {
+            let chain_id = match $provider.get_chainid().await {
+                Ok(chain_id) => chain_id,
+                Err(e) => return Err(Error::Error(e.to_string())),
+            };
+
+            if network.get_chainid() != chain_id {
+                let e = format!(
+                    "Configured chain_id {} does not match on-chain value {}",
+                    chain_id,
+                    network.get_chainid()
+                );
+                return Err(Error::ChainIdError(e));
+            }
+        }
+    };
+}
+
 #[async_trait]
 impl AbiProviderTrait<Provider<Ws>> for AbiProvider {
     async fn provider(&self) -> Result<Provider<Ws>, Error> {
         match &self.url {
             Some(url) => {
                 let provider = Provider::<Ws>::connect(url.clone()).await?;
+                assert_chain_id!(self.network, provider);
                 Ok(provider)
             }
             None => Err(Error::Error(String::from("Provider url is None"))),
@@ -48,6 +69,7 @@ impl AbiProviderTrait<Provider<Http>> for AbiProvider {
         match &self.url {
             Some(url) => {
                 let provider = Provider::<Http>::new(Http::new(url.clone()));
+                assert_chain_id!(self.network, provider);
                 Ok(provider)
             }
             None => Err(Error::Error(String::from("Provider url is None"))),
@@ -75,7 +97,7 @@ impl AbiProviderTrait<Provider<RetryClient<Http>>> for AbiProvider {
                             Box::new(HttpRateLimitRetryPolicy::default()),
                         ),
                 );
-
+                assert_chain_id!(self.network, provider);
                 Ok(provider)
             }
             None => Err(Error::Error(String::from("Provider url is None"))),
