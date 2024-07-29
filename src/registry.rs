@@ -1,23 +1,11 @@
-use crate::{error::Error, network::Network};
-use async_trait::async_trait;
-use ethers::{
-    providers::{JsonRpcClient, Provider},
-    types::Address,
-};
+use crate::network::Network;
+use ethers::types::Address;
 use std::{
     clone::Clone,
     collections::HashMap,
     sync::{Arc, RwLock},
 };
 use url::Url;
-
-#[async_trait]
-pub trait AbiRegistryTrait<T>
-where
-    T: JsonRpcClient,
-{
-    async fn provider(&self) -> Result<Provider<T>, Error>;
-}
 
 #[derive(Debug)]
 pub struct AbiRegistry<C> {
@@ -55,8 +43,6 @@ impl<C> AbiRegistry<C> {
 #[macro_export]
 macro_rules! abirpc {
     ($abi:ident, $abi_registry: ident) => {
-        use $crate::{address_from, network::Network, registry::AbiRegistryTrait};
-
         #[derive(Debug)]
         pub struct $abi_registry<T>(
             $crate::registry::AbiRegistry<$abi<::ethers::prelude::Provider<T>>>,
@@ -65,7 +51,7 @@ macro_rules! abirpc {
             T: ::ethers::prelude::JsonRpcClient;
 
         #[async_trait::async_trait]
-        impl $crate::registry::AbiRegistryTrait<::ethers::prelude::Ws>
+        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Ws>
             for $abi_registry<::ethers::prelude::Ws>
         {
             async fn provider(
@@ -89,7 +75,7 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
-        impl $crate::registry::AbiRegistryTrait<::ethers::prelude::Http>
+        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Http>
             for $abi_registry<::ethers::prelude::Http>
         {
             async fn provider(
@@ -112,7 +98,7 @@ macro_rules! abirpc {
 
         #[async_trait::async_trait]
         impl
-            $crate::registry::AbiRegistryTrait<
+            $crate::provider::AbiProviderTrait<
                 ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
             > for $abi_registry<::ethers::prelude::RetryClient<::ethers::prelude::Http>>
         {
@@ -157,7 +143,7 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
-        impl $crate::registry::AbiRegistryTrait<::ethers::prelude::MockProvider>
+        impl $crate::provider::AbiProviderTrait<::ethers::prelude::MockProvider>
             for $abi_registry<::ethers::prelude::MockProvider>
         {
             async fn provider(
