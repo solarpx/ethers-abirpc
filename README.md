@@ -65,7 +65,7 @@ let network = Network::ETHEREUM;
 let network = Network::ChainId(1);
 ```
 
-Whenever a provider is constructed, its `ChainId` is validated by querying the on-chain configuration. If the `ChainId`s do not match, initialization will fail. 
+Whenever a provider is constructed, its `ChainId` is validated by querying the on-chain configuration. If the `ChainIds` do not match, initialization will fail. 
 
 ```rust
 let registry = Erc20TokenRegistry::<Provider<Http>>::new(
