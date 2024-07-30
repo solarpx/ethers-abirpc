@@ -40,7 +40,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-### AbiProvider
+### Provider management
 
 The crate also includes a wrapper for initialization of supported ethers-rs providers. This is helpful for interacting with ethers-rs primitives. 
 
