@@ -105,10 +105,7 @@ impl AbiProviderTrait<Provider<RetryClient<Http>>> for AbiProvider {
                         .rate_limit_retries(retry_config.rate_limit_retries)
                         .timeout_retries(retry_config.timeout_retries)
                         .initial_backoff(Duration::from_millis(retry_config.initial_backoff_ms))
-                        .build(
-                            Http::new(url),
-                            Box::new(HttpRateLimitRetryPolicy::default()),
-                        ),
+                        .build(Http::new(url), Box::new(HttpRateLimitRetryPolicy)),
                 );
                 assert_chain_id!(self.network, provider);
                 Ok(provider)
