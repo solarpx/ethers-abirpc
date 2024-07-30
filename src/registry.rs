@@ -5,17 +5,16 @@ use std::{
     collections::HashMap,
     sync::{Arc, RwLock},
 };
-use url::Url;
 
 #[derive(Debug)]
 pub struct AbiRegistry<C> {
-    pub url: Option<Url>,
+    pub url: Option<String>,
     pub network: Option<Network>,
     pub registry: Arc<RwLock<HashMap<Address, C>>>,
 }
 
 impl<C> AbiRegistry<C> {
-    pub fn new(url: Option<Url>, network: Option<Network>) -> Self {
+    pub fn new(url: Option<String>, network: Option<Network>) -> Self {
         Self {
             url,
             network,
@@ -105,6 +104,23 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
+        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
+            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
+        {
+            async fn provider(
+                &self,
+            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ipc>, $crate::error::Error>
+            {
+                let provider: ::ethers::prelude::Provider<::ethers::prelude::Ipc> =
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                        .provider()
+                        .await?;
+
+                Ok(provider)
+            }
+        }
+
+        #[async_trait::async_trait]
         impl
             $crate::provider::AbiProviderTrait<
                 ::ethers::prelude::Provider<::ethers::prelude::MockProvider>,
@@ -129,7 +145,7 @@ macro_rules! abirpc {
         where
             M: ::ethers::prelude::Middleware,
         {
-            pub fn new(url: Option<::url::Url>, network: Option<$crate::network::Network>) -> Self {
+            pub fn new(url: Option<String>, network: Option<$crate::network::Network>) -> Self {
                 let registry = $crate::registry::AbiRegistry::<$abi<M>>::new(url, network);
                 Self(registry)
             }

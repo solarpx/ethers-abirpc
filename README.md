@@ -6,6 +6,7 @@ This library defines the `abirpc!` macro along with several other utilites for e
 Provider<Ws>
 Provider<Http>
 Provider<RetryClient<Http>>
+Provider<Ipc>
 Provider<MockProvider>
 ```
 
@@ -17,7 +18,6 @@ use ethers::{
     providers::{Provider, Ws},
 };
 use ethers_abirpc::prelude::*;
-use url::Url;
 
 abigen!(Erc20Token, "./abi/Erc20Token.abi"); // Path to abi (json)
 abirpc!(Erc20Token, Erc20TokenRegistry);
@@ -25,10 +25,8 @@ abirpc!(Erc20Token, Erc20TokenRegistry);
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let address = address_from!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")?; // WETH
-    let url = Url::parse("wss://ethereum-rpc.publicnode.com")?;
-
     let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
-    	Some(url), 
+    	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
     	Some(Network::ETHEREUM)
     );
     let provider = registry.provider().await?;
@@ -45,10 +43,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 The crate also includes a wrapper for initialization of supported ethers-rs providers. This is helpful for interacting with ethers-rs primitives. 
 
 ```rust
-let url = Url::parse("wss://ethereum-rpc.publicnode.com")?;
-let provider: Provider<Ws> = AbiProvider::new(Some(url), Some(Network::ChainId(1)))
-    .provider()
-    .await?;
+let provider: Provider<Ws> = AbiProvider::new(
+    Some(String::from("wss://ethereum-rpc.publicnode.com")),
+    Some(Network::ChainId(1)),
+)
+.provider()
+.await?;
 
 let mut stream = provider.subscribe_blocks().await?;
 while let Some(block) = stream.next().await {
@@ -68,10 +68,9 @@ let network = Network::ChainId(1);
 Whenever an ethers-rs provider is constructed in the crate context, the `ChainId` is validated by querying for the on-chain configuration. If the `ChainId` does not match the provided network, initialization will fail. 
 
 ```rust
-let url = Url::parse(TEST_HTTP_PROVIDER)?;
 let registry = Erc20TokenRegistry::<Provider<Http>>::new(
-	Some("wss://ethereum-rpc.publicnode.com"), 
-	Network::ChainId(10) // Incorrect ChainId
+	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
+	Some(Network::ChainId(10)) // Incorrect ChainId
 );
 let provider = registry.provider().await?; // Error 
 ```
