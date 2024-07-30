@@ -1,6 +1,6 @@
 # ethers-abirpc
 
-This library defines the `abirpc!` macro along with several other utilites for ethers-rs provider encapsulation. The following ethers-rs provider types are supported
+This crate defines the `abirpc!` macro along with several other utilites for ethers-rs provider encapsulation. The following ethers-rs provider types are supported:
 
 ```rust
 Provider<Ws>
