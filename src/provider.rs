@@ -61,6 +61,20 @@ impl AbiProviderTrait<Provider<Ws>> for AbiProvider {
 }
 
 #[async_trait]
+impl AbiProviderTrait<Provider<Ipc>> for AbiProvider {
+    async fn provider(&self) -> Result<Provider<Ipc>, Error> {
+        match &self.url {
+            Some(url) => {
+                let provider = Provider::<Ipc>::connect_ipc(Path::new(&url)).await?;
+                assert_chain_id!(self.network, provider);
+                Ok(provider)
+            }
+            None => Err(Error::Error(String::from("Provider url is None"))),
+        }
+    }
+}
+
+#[async_trait]
 impl AbiProviderTrait<Provider<Http>> for AbiProvider {
     async fn provider(&self) -> Result<Provider<Http>, Error> {
         match &self.url {
@@ -96,20 +110,6 @@ impl AbiProviderTrait<Provider<RetryClient<Http>>> for AbiProvider {
                             Box::new(HttpRateLimitRetryPolicy::default()),
                         ),
                 );
-                assert_chain_id!(self.network, provider);
-                Ok(provider)
-            }
-            None => Err(Error::Error(String::from("Provider url is None"))),
-        }
-    }
-}
-
-#[async_trait]
-impl AbiProviderTrait<Provider<Ipc>> for AbiProvider {
-    async fn provider(&self) -> Result<Provider<Ipc>, Error> {
-        match &self.url {
-            Some(url) => {
-                let provider = Provider::<Ipc>::connect_ipc(Path::new(&url)).await?;
                 assert_chain_id!(self.network, provider);
                 Ok(provider)
             }

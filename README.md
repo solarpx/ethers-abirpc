@@ -4,9 +4,9 @@ This library defines the `abirpc!` macro along with several other utilites for e
 
 ```rust
 Provider<Ws>
+Provider<Ipc>
 Provider<Http>
 Provider<RetryClient<Http>>
-Provider<Ipc>
 Provider<MockProvider>
 ```
 
@@ -38,23 +38,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-### Provider management
+### ABI management
 
-The crate also includes a wrapper for initialization of supported ethers-rs providers. This is helpful for interacting with ethers-rs primitives. 
+ABIs inclusion occurs at compile time, and files can be located anywhere within your crate. Also, multiple ABIs can be initialized in the same file. 
 
 ```rust
-let provider: Provider<Ws> = AbiProvider::new(
-    Some(String::from("wss://ethereum-rpc.publicnode.com")),
-    Some(Network::ChainId(1)),
-)
-.provider()
-.await?;
+use ethers_abirpc::prelude::*;
 
-let mut stream = provider.subscribe_blocks().await?;
-while let Some(block) = stream.next().await {
-	println!("{:?}", block)
-}
+abigen!(Erc20Token, "./abi/Erc20Token.abi"); 
+abirpc!(Erc20Token, Erc20TokenRegistry);
+
+abigen!(Erc677Token, "./abi/Erc677Token.abi"); 
+abirpc!(Erc677Token, Erc677TokenRegistry);
+
+abigen!(Erc721Token, "./abi/Erc721Token.abi"); 
+abirpc!(Erc721Token, Erc721TokenRegistry);
 ```
+
+This allows users to build complex interactions with multiple smart contracts and provider types all within the same crate.
 
 ### Network management
 
@@ -75,21 +76,21 @@ let registry = Erc20TokenRegistry::<Provider<Http>>::new(
 let provider = registry.provider().await?; // Error 
 ```
 
-### ABI management
+### Provider management
 
-ABIs inclusion occurs at compile time, and files can be located anywhere within your crate. Also, multiple ABIs can be initialized in the same file. 
+The crate also includes a wrapper for initialization of supported ethers-rs providers. This is helpful for interacting with ethers-rs primitives. 
 
 ```rust
-use ethers_abirpc::prelude::*;
+let provider: Provider<Ws> = AbiProvider::new(
+    Some(String::from("wss://ethereum-rpc.publicnode.com")),
+    Some(Network::ChainId(1)),
+)
+.provider()
+.await?;
 
-abigen!(Erc20Token, "./abi/Erc20Token.abi"); 
-abirpc!(Erc20Token, Erc20TokenRegistry);
-
-abigen!(Erc677Token, "./abi/Erc677Token.abi"); 
-abirpc!(Erc677Token, Erc677TokenRegistry);
-
-abigen!(Erc721Token, "./abi/Erc721Token.abi"); 
-abirpc!(Erc721Token, Erc721TokenRegistry);
+let mut stream = provider.subscribe_blocks().await?;
+while let Some(block) = stream.next().await {
+	println!("{:?}", block)
+}
 ```
 
-This allows users to build complex interactions with multiple smart contracts and provider types all within the same crate.

@@ -65,6 +65,23 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
+        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
+            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
+        {
+            async fn provider(
+                &self,
+            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ipc>, $crate::error::Error>
+            {
+                let provider: ::ethers::prelude::Provider<::ethers::prelude::Ipc> =
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                        .provider()
+                        .await?;
+
+                Ok(provider)
+            }
+        }
+
+        #[async_trait::async_trait]
         impl
             $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Http>>
             for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Http>>
@@ -95,23 +112,6 @@ macro_rules! abirpc {
                 $crate::error::Error,
             > {
                 let provider: ::ethers::prelude::Provider<::ethers::prelude::RetryClient<Http>> =
-                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
-                        .provider()
-                        .await?;
-
-                Ok(provider)
-            }
-        }
-
-        #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
-            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
-        {
-            async fn provider(
-                &self,
-            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ipc>, $crate::error::Error>
-            {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::Ipc> =
                     $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
                         .provider()
                         .await?;
