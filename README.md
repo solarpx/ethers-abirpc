@@ -40,7 +40,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ### ABI management
 
-ABIs inclusion occurs at compile time. ABI files can be located anywhere on the system, and multiple ABIs can be initialized within the same `.rs` file. 
+ABI inclusion occurs at compile time. ABI files can be located anywhere on the system, and multiple ABIs can be initialized within the same `.rs` file. 
 
 ```rust
 use ethers_abirpc::prelude::*;
@@ -57,7 +57,7 @@ abirpc!(Erc721Token, Erc721TokenRegistry);
 
 ### Network management
 
-Network initialization can be achieved via keyword or by specifying the desired `ChainId` 
+Network initialization is achieved via keyword or by specifying the desired `ChainId` 
 
 ```rust 
 let network = Network::ETHEREUM;
@@ -65,7 +65,7 @@ let network = Network::ETHEREUM;
 let network = Network::ChainId(1);
 ```
 
-Whenever an ethers-rs provider is constructed in `ethers_abigen`, the `ChainId` is validated by querying the on-chain configuration. If the `ChainId`s do not match, initialization will fail. 
+Whenever a provider is constructed, its `ChainId` is validated by querying the on-chain configuration. If the `ChainId`s do not match, initialization will fail. 
 
 ```rust
 let registry = Erc20TokenRegistry::<Provider<Http>>::new(
@@ -77,7 +77,7 @@ let provider = registry.provider().await?; // Error
 
 ### Provider management
 
-The crate also includes a wrapper for initialization of supported ethers-rs providers. This is helpful for interacting with ethers-rs primitives outside the context of smart contract interaction.
+The crate also includes a wrapper for initialization of all supported providers. This is helpful for interacting with ethers-rs primitives outside the context of smart contract interaction.
 
 ```rust
 let provider: Provider<Ws> = AbiProvider::new(
@@ -92,4 +92,3 @@ while let Some(block) = stream.next().await {
 	println!("{:?}", block)
 }
 ```
-
