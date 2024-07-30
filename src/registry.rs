@@ -102,19 +102,29 @@ macro_rules! abirpc {
         #[async_trait::async_trait]
         impl
             $crate::provider::AbiProviderTrait<
-                ::ethers::prelude::Provider<::ethers::prelude::RetryClient<Http>>,
-            > for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::RetryClient<Http>>>
+                ::ethers::prelude::Provider<
+                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
+                >,
+            >
+            for $abi_registry<
+                ::ethers::prelude::Provider<
+                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
+                >,
+            >
         {
             async fn provider(
                 &self,
             ) -> Result<
-                ::ethers::prelude::Provider<::ethers::prelude::RetryClient<Http>>,
+                ::ethers::prelude::Provider<
+                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
+                >,
                 $crate::error::Error,
             > {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::RetryClient<Http>> =
-                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
-                        .provider()
-                        .await?;
+                let provider: ::ethers::prelude::Provider<
+                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
+                > = $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                    .provider()
+                    .await?;
 
                 Ok(provider)
             }

@@ -68,7 +68,7 @@ let network = Network::ChainId(1);
 Whenever a provider is constructed, its `ChainId` is validated by querying the on-chain configuration. If the `ChainIds` do not match, initialization will fail. 
 
 ```rust
-let registry = Erc20TokenRegistry::<Provider<Http>>::new(
+let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
 	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
 	Some(Network::ChainId(10)) // Incorrect ChainId
 );
@@ -80,15 +80,23 @@ let provider = registry.provider().await?; // Error
 The crate also includes a wrapper for initialization of all supported providers. This is helpful for interacting with ethers-rs primitives outside the context of smart contract interaction.
 
 ```rust
-let provider: Provider<Ws> = AbiProvider::new(
-    Some(String::from("wss://ethereum-rpc.publicnode.com")),
-    Some(Network::ChainId(1)),
-)
-.provider()
-.await?;
+use ethers::providers::{Middleware, Provider, StreamExt, Ws};
+use ethers_abirpc::prelude::*;
 
-let mut stream = provider.subscribe_blocks().await?;
-while let Some(block) = stream.next().await {
-	println!("{:?}", block)
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let provider: Provider<Ws> = AbiProvider::new(
+        Some(String::from("wss://ethereum-rpc.publicnode.com")),
+        Some(Network::ChainId(1)),
+    )
+    .provider()
+    .await?;
+
+    let mut stream = provider.subscribe_blocks().await?;
+    while let Some(block) = stream.next().await {
+        println!("{:?}", block)
+    }
+
+    Ok(())
 }
 ```

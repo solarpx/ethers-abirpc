@@ -1,4 +1,4 @@
-use ethers::contract::Abigen;
+use ethers::prelude::Abigen;
 
 #[tokio::test]
 async fn test_abigen() -> Result<(), Box<dyn std::error::Error>> {
