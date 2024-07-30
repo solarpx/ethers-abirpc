@@ -3,7 +3,7 @@ use ethers_abirpc::prelude::*;
 
 const TEST_HTTP_PROVIDER: &str = "https://ethereum.publicnode.com";
 const TEST_WS_PROVIDER: &str = "wss://ethereum-rpc.publicnode.com";
-const TEST_NETWORK: Network = Network::ChainId(1);
+const TEST_NETWORK: Network = Network::ETHEREUM;
 
 #[tokio::test]
 async fn test_ws() -> Result<(), Box<dyn std::error::Error>> {

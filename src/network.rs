@@ -2,7 +2,7 @@ use ethers::types::U256;
 use std::clone::Clone;
 use strum_macros::Display;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct RetryClientConfig {
     pub rate_limit_retries: u32,
     pub timeout_retries: u32,
@@ -42,6 +42,7 @@ pub enum Network {
     LINEA,
     BLAST,
     ChainId(u32),
+    ChainIdWithRetryClientConfig((u32, RetryClientConfig)),
 }
 
 impl Network {
@@ -68,6 +69,7 @@ impl Network {
             Network::LINEA => U256::from(59144),
             Network::BLAST => U256::from(81457),
             Network::ChainId(chain_id) => U256::from(*chain_id),
+            Network::ChainIdWithRetryClientConfig(value) => U256::from(value.0),
         }
     }
 
@@ -77,6 +79,7 @@ impl Network {
                 initial_backoff_ms: 150,
                 ..RetryClientConfig::default()
             },
+            Network::ChainIdWithRetryClientConfig(value) => value.1,
             _ => RetryClientConfig::default(),
         }
     }
