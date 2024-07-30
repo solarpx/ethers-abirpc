@@ -80,23 +80,15 @@ let provider = registry.provider().await?; // Error
 The crate also includes a wrapper for initialization of all supported providers. This is helpful for interacting with ethers-rs primitives outside the context of smart contract interaction.
 
 ```rust
-use ethers::providers::{Middleware, Provider, StreamExt, Ws};
-use ethers_abirpc::prelude::*;
+let provider: Provider<Ws> = AbiProvider::new(
+    Some(String::from("wss://ethereum-rpc.publicnode.com")),
+    Some(Network::ChainId(1)),
+)
+.provider()
+.await?;
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let provider: Provider<Ws> = AbiProvider::new(
-        Some(String::from("wss://ethereum-rpc.publicnode.com")),
-        Some(Network::ChainId(1)),
-    )
-    .provider()
-    .await?;
-
-    let mut stream = provider.subscribe_blocks().await?;
-    while let Some(block) = stream.next().await {
-        println!("{:?}", block)
-    }
-
-    Ok(())
+let mut stream = provider.subscribe_blocks().await?;
+while let Some(block) = stream.next().await {
+    println!("{:?}", block)
 }
 ```
