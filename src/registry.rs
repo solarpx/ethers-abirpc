@@ -1,33 +1,20 @@
-use crate::{error::Error, network::Network};
-use async_trait::async_trait;
-use ethers::{
-    providers::{JsonRpcClient, Provider},
-    types::Address,
-};
+use crate::network::Network;
+use ethers::types::Address;
 use std::{
     clone::Clone,
     collections::HashMap,
     sync::{Arc, RwLock},
 };
-use url::Url;
-
-#[async_trait]
-pub trait AbiRegistryTrait<T>
-where
-    T: JsonRpcClient,
-{
-    async fn provider(&self) -> Result<Provider<T>, Error>;
-}
 
 #[derive(Debug)]
 pub struct AbiRegistry<C> {
-    pub url: Option<Url>,
+    pub url: Option<String>,
     pub network: Option<Network>,
     pub registry: Arc<RwLock<HashMap<Address, C>>>,
 }
 
 impl<C> AbiRegistry<C> {
-    pub fn new(url: Option<Url>, network: Option<Network>) -> Self {
+    pub fn new(url: Option<String>, network: Option<Network>) -> Self {
         Self {
             url,
             network,
@@ -55,66 +42,75 @@ impl<C> AbiRegistry<C> {
 #[macro_export]
 macro_rules! abirpc {
     ($abi:ident, $abi_registry: ident) => {
-        use $crate::{address_from, network::Network, registry::AbiRegistryTrait};
-
         #[derive(Debug)]
-        pub struct $abi_registry<T>(
-            $crate::registry::AbiRegistry<$abi<::ethers::prelude::Provider<T>>>,
-        )
+        pub struct $abi_registry<M>($crate::registry::AbiRegistry<$abi<M>>)
         where
-            T: ::ethers::prelude::JsonRpcClient;
+            M: ::ethers::prelude::Middleware;
 
         #[async_trait::async_trait]
-        impl $crate::registry::AbiRegistryTrait<::ethers::prelude::Ws>
-            for $abi_registry<::ethers::prelude::Ws>
+        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Ws>>
+            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Ws>>
         {
             async fn provider(
                 &self,
             ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ws>, $crate::error::Error>
             {
-                match &self.0.url {
-                    Some(url) => {
-                        let provider =
-                            ::ethers::prelude::Provider::<::ethers::prelude::Ws>::connect(
-                                url.clone(),
-                            )
-                            .await?;
-                        Ok(provider)
-                    }
-                    None => Err($crate::error::Error::Error(String::from(
-                        "Provider url is None",
-                    ))),
-                }
+                let provider: ::ethers::prelude::Provider<::ethers::prelude::Ws> =
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                        .provider()
+                        .await?;
+
+                Ok(provider)
             }
         }
 
         #[async_trait::async_trait]
-        impl $crate::registry::AbiRegistryTrait<::ethers::prelude::Http>
-            for $abi_registry<::ethers::prelude::Http>
+        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
+            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
         {
             async fn provider(
                 &self,
-            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Http>, $crate::error::Error>
+            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ipc>, $crate::error::Error>
             {
-                match &self.0.url {
-                    Some(url) => {
-                        let provider = ::ethers::prelude::Provider::<::ethers::prelude::Http>::new(
-                            ::ethers::prelude::Http::new(url.clone()),
-                        );
-                        Ok(provider)
-                    }
-                    None => Err($crate::error::Error::Error(String::from(
-                        "Provider url is None",
-                    ))),
-                }
+                let provider: ::ethers::prelude::Provider<::ethers::prelude::Ipc> =
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                        .provider()
+                        .await?;
+
+                Ok(provider)
             }
         }
 
         #[async_trait::async_trait]
         impl
-            $crate::registry::AbiRegistryTrait<
-                ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-            > for $abi_registry<::ethers::prelude::RetryClient<::ethers::prelude::Http>>
+            $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Http>>
+            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Http>>
+        {
+            async fn provider(
+                &self,
+            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Http>, $crate::error::Error>
+            {
+                let provider: ::ethers::prelude::Provider<::ethers::prelude::Http> =
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                        .provider()
+                        .await?;
+
+                Ok(provider)
+            }
+        }
+
+        #[async_trait::async_trait]
+        impl
+            $crate::provider::AbiProviderTrait<
+                ::ethers::prelude::Provider<
+                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
+                >,
+            >
+            for $abi_registry<
+                ::ethers::prelude::Provider<
+                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
+                >,
+            >
         {
             async fn provider(
                 &self,
@@ -124,41 +120,21 @@ macro_rules! abirpc {
                 >,
                 $crate::error::Error,
             > {
-                match &self.0.url {
-                    Some(url) => {
-                        let retry_config = match self.0.network {
-                            Some(network) => network.retry_client_config(),
-                            None => $crate::network::RetryClientConfig::default(),
-                        };
+                let provider: ::ethers::prelude::Provider<
+                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
+                > = $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                    .provider()
+                    .await?;
 
-                        let provider =
-                            ::ethers::prelude::Provider::new(
-                                ::ethers::prelude::RetryClientBuilder::default()
-                                    .rate_limit_retries(retry_config.rate_limit_retries)
-                                    .timeout_retries(retry_config.timeout_retries)
-                                    .initial_backoff(::std::time::Duration::from_millis(
-                                        retry_config.initial_backoff_ms,
-                                    ))
-                                    .build(
-                                        ::ethers::prelude::Http::new(url.clone()),
-                                        Box::new(
-                                            ::ethers::prelude::HttpRateLimitRetryPolicy::default(),
-                                        ),
-                                    ),
-                            );
-
-                        Ok(provider)
-                    }
-                    None => Err($crate::error::Error::Error(String::from(
-                        "Provider url is None",
-                    ))),
-                }
+                Ok(provider)
             }
         }
 
         #[async_trait::async_trait]
-        impl $crate::registry::AbiRegistryTrait<::ethers::prelude::MockProvider>
-            for $abi_registry<::ethers::prelude::MockProvider>
+        impl
+            $crate::provider::AbiProviderTrait<
+                ::ethers::prelude::Provider<::ethers::prelude::MockProvider>,
+            > for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::MockProvider>>
         {
             async fn provider(
                 &self,
@@ -166,35 +142,25 @@ macro_rules! abirpc {
                 ::ethers::prelude::Provider<::ethers::prelude::MockProvider>,
                 $crate::error::Error,
             > {
-                match &self.0.url {
-                    Some(_) => Err($crate::error::Error::Error(String::from(
-                        "MockProvider url is not None",
-                    ))),
-                    None => {
-                        let (provider, _mock) = ::ethers::prelude::Provider::mocked();
-                        Ok(provider)
-                    }
-                }
+                let provider: ::ethers::prelude::Provider<::ethers::prelude::MockProvider> =
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                        .provider()
+                        .await?;
+
+                Ok(provider)
             }
         }
 
-        impl<T> $abi_registry<T>
+        impl<M> $abi_registry<M>
         where
-            T: ::ethers::prelude::JsonRpcClient,
+            M: ::ethers::prelude::Middleware,
         {
-            pub fn new(url: Option<::url::Url>, network: Option<$crate::network::Network>) -> Self {
-                let registry =
-                    $crate::registry::AbiRegistry::<$abi<::ethers::prelude::Provider<T>>>::new(
-                        url, network,
-                    );
+            pub fn new(url: Option<String>, network: Option<$crate::network::Network>) -> Self {
+                let registry = $crate::registry::AbiRegistry::<$abi<M>>::new(url, network);
                 Self(registry)
             }
 
-            pub fn register(
-                &self,
-                provider: ::ethers::prelude::Provider<T>,
-                address: ::ethers::prelude::Address,
-            ) -> $abi<::ethers::prelude::Provider<T>> {
+            pub fn register(&self, provider: M, address: ::ethers::prelude::Address) -> $abi<M> {
                 if !self.0.entry_exists(address) {
                     let instance = $abi::new(address, provider.into());
                     self.0.add_entry(address, instance)
@@ -213,9 +179,9 @@ macro_rules! abirpc {
             }
         }
 
-        impl<T> $abi<T>
+        impl<M> $abi<M>
         where
-            T: ::ethers::prelude::Middleware,
+            M: ::ethers::prelude::Middleware,
         {
             pub async fn get_logs<E>(
                 &self,
