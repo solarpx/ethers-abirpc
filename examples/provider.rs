@@ -11,7 +11,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await?;
 
     let mut stream = provider.subscribe_blocks().await?;
-    while let Some(block) = stream.next().await {
+    if let Some(block) = stream.next().await {
         println!("{:?}", block)
     }
 
