@@ -4,9 +4,9 @@ This crate defines the `abirpc!` macro along with several other utilites for eth
 
 ```rust
 Provider<Ws>
-Provider<Ipc>
 Provider<Http>
 Provider<RetryClient<Http>>
+Provider<Ipc>
 Provider<MockProvider>
 ```
 
