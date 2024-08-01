@@ -19,57 +19,63 @@ impl Default for RetryClientConfig {
     }
 }
 
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub struct NetworkConfig {
+    pub chain_id: u32,
+    pub retry_client_config: RetryClientConfig,
+}
+
 #[derive(Debug, PartialEq, Copy, Clone, Display)]
 pub enum Network {
     ANVIL,
-    ETHEREUM,
-    OPTIMISM,
+    ARBITRUM,
+    AVALANCHE,
+    BASE,
+    BLAST,
     BSC,
-    GNOSIS,
-    POLYGON,
+    CELO,
+    ETHEREUM,
     FANTOM,
     FILECOIN,
+    GNOSIS,
+    IOTEX,
+    KAVA,
+    KLAYTN,
+    LINEA,
     METIS,
     MOONBEAM,
     MOONRIVER,
-    KAVA,
-    IOTEX,
-    KLAYTN,
-    BASE,
-    ARBITRUM,
-    CELO,
-    AVALANCHE,
-    LINEA,
-    BLAST,
+    OPTIMISM,
+    POLYGON,
     ChainId(u32),
-    ChainIdWithRetryClientConfig((u32, RetryClientConfig)),
+    NetworkConfig(NetworkConfig),
 }
 
 impl Network {
     pub fn get_chainid(&self) -> U256 {
         match self {
-            Network::ETHEREUM => U256::from(1),
-            Network::OPTIMISM => U256::from(10),
+            Network::ANVIL => U256::from(31337),
+            Network::ARBITRUM => U256::from(42161),
+            Network::AVALANCHE => U256::from(43114),
+            Network::BASE => U256::from(8453),
+            Network::BLAST => U256::from(81457),
             Network::BSC => U256::from(56),
-            Network::GNOSIS => U256::from(100),
-            Network::POLYGON => U256::from(137),
+            Network::CELO => U256::from(42220),
+            Network::ETHEREUM => U256::from(1),
             Network::FANTOM => U256::from(250),
             Network::FILECOIN => U256::from(314),
+            Network::GNOSIS => U256::from(100),
+            Network::IOTEX => U256::from(4689),
+            Network::KAVA => U256::from(2222),
+            Network::KLAYTN => U256::from(8217),
+            Network::LINEA => U256::from(59144),
             Network::METIS => U256::from(1088),
             Network::MOONBEAM => U256::from(1284),
             Network::MOONRIVER => U256::from(1285),
-            Network::KAVA => U256::from(2222),
-            Network::IOTEX => U256::from(4689),
-            Network::KLAYTN => U256::from(8217),
-            Network::BASE => U256::from(8453),
-            Network::ANVIL => U256::from(31337),
-            Network::ARBITRUM => U256::from(42161),
-            Network::CELO => U256::from(42220),
-            Network::AVALANCHE => U256::from(43114),
-            Network::LINEA => U256::from(59144),
-            Network::BLAST => U256::from(81457),
+            Network::OPTIMISM => U256::from(10),
+            Network::POLYGON => U256::from(137),
             Network::ChainId(chain_id) => U256::from(*chain_id),
-            Network::ChainIdWithRetryClientConfig(value) => U256::from(value.0),
+            Network::NetworkConfig(config) => U256::from(config.chain_id),
         }
     }
 
@@ -79,7 +85,7 @@ impl Network {
                 initial_backoff_ms: 150,
                 ..RetryClientConfig::default()
             },
-            Network::ChainIdWithRetryClientConfig(value) => value.1,
+            Network::NetworkConfig(config) => config.retry_client_config,
             _ => RetryClientConfig::default(),
         }
     }

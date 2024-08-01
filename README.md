@@ -92,3 +92,16 @@ while let Some(block) = stream.next().await {
     println!("{:?}", block)
 }
 ```
+
+### Release notes
+
+Release versions
+
+`v0.2.0`: stable
+
+Development versions
+
+`v0.1.3`: stable
+`v0.1.2`: stable (unstable imports)
+`v0.1.1`: unsupported
+`v0.1.0`: unsupported
