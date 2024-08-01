@@ -28,9 +28,21 @@ async fn test_network_from_chain_id() -> Result<(), Box<dyn std::error::Error>> 
 }
 
 #[tokio::test]
+async fn test_network_unknown() -> Result<(), Box<dyn std::error::Error>> {
+    let network = Network::Anonymous;
+
+    let _provider: Provider<Http> =
+        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(network))
+            .provider()
+            .await?;
+
+    Ok(())
+}
+
+#[tokio::test]
 async fn test_network_from_config() -> Result<(), Box<dyn std::error::Error>> {
     let network = Network::NetworkConfig(NetworkConfig {
-        chain_id: 1,
+        chain_id: Some(1),
         retry_client_config: RetryClientConfig {
             rate_limit_retries: 5,
             timeout_retries: 2,
