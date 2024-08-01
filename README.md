@@ -64,7 +64,9 @@ let network = Network::ETHEREUM;
 // OR
 let network = Network::ChainId(1);
 // OR
-let network = Network::NetworkConfig(NetworkConfig)
+let network = Network::Anonymous;
+// OR
+let network = Network::NetworkConfig(NetworkConfig::default())
 ```
 
 Whenever a provider is constructed, its `ChainId` is validated by querying the on-chain configuration. If the `ChainIds` do not match, initialization will fail. 

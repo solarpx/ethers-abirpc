@@ -28,18 +28,6 @@ async fn test_network_from_chain_id() -> Result<(), Box<dyn std::error::Error>> 
 }
 
 #[tokio::test]
-async fn test_network_unknown() -> Result<(), Box<dyn std::error::Error>> {
-    let network = Network::Anonymous;
-
-    let _provider: Provider<Http> =
-        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(network))
-            .provider()
-            .await?;
-
-    Ok(())
-}
-
-#[tokio::test]
 async fn test_network_from_config() -> Result<(), Box<dyn std::error::Error>> {
     let network = Network::NetworkConfig(NetworkConfig {
         chain_id: Some(1),
@@ -51,6 +39,30 @@ async fn test_network_from_config() -> Result<(), Box<dyn std::error::Error>> {
     });
 
     let _provider: Provider<RetryClient<Http>> =
+        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(network))
+            .provider()
+            .await?;
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_network_from_config_default() -> Result<(), Box<dyn std::error::Error>> {
+    let network = Network::NetworkConfig(NetworkConfig::default());
+
+    let _provider: Provider<RetryClient<Http>> =
+        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(network))
+            .provider()
+            .await?;
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_network_anonymous() -> Result<(), Box<dyn std::error::Error>> {
+    let network = Network::Anonymous;
+
+    let _provider: Provider<Http> =
         AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(network))
             .provider()
             .await?;

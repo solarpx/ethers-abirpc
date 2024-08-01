@@ -19,7 +19,7 @@ impl Default for RetryClientConfig {
     }
 }
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub struct NetworkConfig {
     pub chain_id: Option<u32>,
     pub retry_client_config: RetryClientConfig,
@@ -77,7 +77,7 @@ impl Network {
             Network::POLYGON => Some(U256::from(137)),
             Network::Anonymous => None,
             Network::ChainId(chain_id) => Some(U256::from(*chain_id)),
-            Network::NetworkConfig(config) => config.chain_id.map(|chain_id| U256::from(chain_id)),
+            Network::NetworkConfig(config) => config.chain_id.map(U256::from),
         }
     }
 
