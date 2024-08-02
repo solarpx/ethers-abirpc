@@ -4,18 +4,6 @@ use ethers_abirpc::prelude::*;
 const TEST_HTTP_PROVIDER: &str = "https://ethereum.publicnode.com";
 
 #[tokio::test]
-async fn test_network_from_keyword() -> Result<(), Box<dyn std::error::Error>> {
-    let network = Network::ETHEREUM;
-
-    let _provider: Provider<Http> =
-        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(network))
-            .provider()
-            .await?;
-
-    Ok(())
-}
-
-#[tokio::test]
 async fn test_network_from_chain_id() -> Result<(), Box<dyn std::error::Error>> {
     let network = Network::ChainId(1);
 
@@ -55,17 +43,7 @@ async fn test_network_from_config_default() -> Result<(), Box<dyn std::error::Er
             .provider()
             .await?;
 
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_network_anonymous() -> Result<(), Box<dyn std::error::Error>> {
-    let network = Network::Anonymous;
-
-    let _provider: Provider<Http> =
-        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(network))
-            .provider()
-            .await?;
+    assert_eq!(network.get_chainid(), None);
 
     Ok(())
 }

@@ -48,9 +48,6 @@ use ethers_abirpc::prelude::*;
 abigen!(Erc20Token, "./abi/Erc20Token.abi"); 
 abirpc!(Erc20Token, Erc20TokenRegistry);
 
-abigen!(Erc677Token, "./abi/Erc677Token.abi"); 
-abirpc!(Erc677Token, Erc677TokenRegistry);
-
 abigen!(Erc721Token, "./abi/Erc721Token.abi"); 
 abirpc!(Erc721Token, Erc721TokenRegistry);
 ```
@@ -63,8 +60,6 @@ Network initialization is achieved via keyword or by specifying the desired `Cha
 let network = Network::ETHEREUM;
 // OR
 let network = Network::ChainId(1);
-// OR
-let network = Network::Anonymous;
 // OR
 let network = Network::NetworkConfig(NetworkConfig::default())
 ```
