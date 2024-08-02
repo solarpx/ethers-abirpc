@@ -54,17 +54,13 @@ abirpc!(Erc721Token, Erc721TokenRegistry);
 
 ### Network management
 
-Network initialization is achieved via keyword or by specifying the desired `ChainId` 
+Network initialization is achieved by specifying the desired `ChainId`. Whenever a provider is constructed, its `ChainId` is validated by querying the on-chain configuration.
 
 ```rust 
-let network = Network::ETHEREUM;
-// OR
 let network = Network::ChainId(1);
-// OR
-let network = Network::NetworkConfig(NetworkConfig::default())
 ```
 
-Whenever a provider is constructed, its `ChainId` is validated by querying the on-chain configuration. If the `ChainIds` do not match, initialization will fail. 
+ If the initlaized `ChainId` does not match the on-chain configuration, initialization will fail. 
 
 ```rust
 let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
@@ -72,6 +68,12 @@ let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
 	Some(Network::ChainId(10)) // Incorrect ChainId
 );
 let provider = registry.provider().await?; // Error 
+```
+
+It is also possible to configure a network by passing a `NetworkConfig`. This provides granular control over all parameters. In the default case, `ChainId` is set to `None` bypassing on-chain validation.
+
+```rust 
+let network = Network::NetworkConfig(NetworkConfig::default())
 ```
 
 ### Provider management
