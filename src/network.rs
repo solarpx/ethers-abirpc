@@ -19,19 +19,10 @@ impl Default for RetryClientConfig {
     }
 }
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub struct NetworkConfig {
     pub chain_id: Option<u32>,
     pub retry_client_config: RetryClientConfig,
-}
-
-impl Default for NetworkConfig {
-    fn default() -> Self {
-        Self {
-            chain_id: None,
-            retry_client_config: RetryClientConfig::default(),
-        }
-    }
 }
 
 #[derive(Debug, PartialEq, Copy, Clone, Display)]
