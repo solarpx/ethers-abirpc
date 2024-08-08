@@ -23,37 +23,37 @@ impl Default for RetryClientConfig {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
-pub struct NetworkConfig {
+pub struct ChainConfig {
     pub chain_id: Option<u64>,
     pub retry_client_config: RetryClientConfig,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone, Display)]
-pub enum Network {
+pub enum Chain {
     ChainId(u64),
-    NetworkConfig(NetworkConfig),
+    ChainConfig(ChainConfig),
 }
 
-impl From<NamedChain> for Network {
+impl From<NamedChain> for Chain {
     fn from(named: NamedChain) -> Self {
         Self::ChainId(named as u64)
     }
 }
 
-impl Network {
+impl Chain {
     pub fn get_chainid(&self) -> Option<U256> {
         match self {
-            Network::ChainId(chain_id) => Some(U256::from(*chain_id)),
-            Network::NetworkConfig(config) => config.chain_id.map(U256::from),
+            Chain::ChainId(chain_id) => Some(U256::from(*chain_id)),
+            Chain::ChainConfig(config) => config.chain_id.map(U256::from),
         }
     }
 
     pub fn as_named_chain(&self) -> Result<NamedChain, Error> {
         match self {
-            Network::ChainId(chain_id) => {
+            Chain::ChainId(chain_id) => {
                 NamedChain::try_from(*chain_id).map_err(|e| Error::NamedChainError(e))
             }
-            Network::NetworkConfig(config) => match config.chain_id {
+            Chain::ChainConfig(config) => match config.chain_id {
                 Some(chain_id) => {
                     NamedChain::try_from(chain_id).map_err(|e| Error::NamedChainError(e))
                 }
@@ -64,8 +64,8 @@ impl Network {
 
     pub fn retry_client_config(&self) -> RetryClientConfig {
         match self {
-            Network::NetworkConfig(config) => config.retry_client_config,
-            Network::ChainId(chain_id) => match NamedChain::try_from(*chain_id) {
+            Chain::ChainConfig(config) => config.retry_client_config,
+            Chain::ChainId(chain_id) => match NamedChain::try_from(*chain_id) {
                 Ok(named) => {
                     let initial_backoff_ms_default =
                         RetryClientConfig::default().initial_backoff_ms;

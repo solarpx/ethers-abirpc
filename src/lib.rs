@@ -1,15 +1,15 @@
+pub mod chain;
 pub mod error;
 pub mod named;
-pub mod network;
 pub mod provider;
 pub mod registry;
 
 pub mod prelude {
     pub use crate::{
         abirpc, address_from,
+        chain::{Chain, ChainConfig, RetryClientConfig},
         error::Error,
         named::NamedChain,
-        network::{Network, NetworkConfig, RetryClientConfig},
         provider::{AbiProvider, AbiProviderTrait},
     };
 }

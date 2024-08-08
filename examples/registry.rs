@@ -1,8 +1,10 @@
-use ethers::{
-    contract::abigen,
-    providers::{Provider, Ws},
+use {
+    ethers::{
+        contract::abigen,
+        providers::{Provider, Ws},
+    },
+    ethers_abirpc::prelude::*,
 };
-use ethers_abirpc::prelude::*;
 
 abigen!(Erc20Token, "./tests/abi/Erc20Token.abi");
 abirpc!(Erc20Token, Erc20TokenRegistry);
@@ -15,7 +17,7 @@ const WBTC_ADDRESS: &str = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
         Some(String::from(WS_PROVIDER)),
-        Some(Network::ChainId(1)),
+        Some(Chain::ChainId(1)),
     );
 
     let provider = registry.provider().await?;
