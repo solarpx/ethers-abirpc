@@ -17,3 +17,5 @@ strum_macros = "0.25.2"
 ethers = { version = "2.0.14", features = ["ws", "ipc"] }
 url = "2.4.1"
 async-trait = "0.1.74"
+strum = "0.26.3"
+num_enum = "0.7.3"

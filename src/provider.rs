@@ -1,14 +1,16 @@
-use crate::{
-    error::Error,
-    network::{Network, RetryClientConfig},
+use {
+    crate::{
+        error::Error,
+        network::{Network, RetryClientConfig},
+    },
+    async_trait::async_trait,
+    ethers::providers::{
+        Http, HttpRateLimitRetryPolicy, Ipc, Middleware, MockProvider, Provider, RetryClient,
+        RetryClientBuilder, Ws,
+    },
+    std::{path::Path, time::Duration},
+    url::Url,
 };
-use async_trait::async_trait;
-use ethers::providers::{
-    Http, HttpRateLimitRetryPolicy, Ipc, Middleware, MockProvider, Provider, RetryClient,
-    RetryClientBuilder, Ws,
-};
-use std::{path::Path, time::Duration};
-use url::Url;
 
 #[async_trait]
 pub trait AbiProviderTrait<M>

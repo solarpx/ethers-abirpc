@@ -27,7 +27,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let address = address_from!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")?; // WETH
     let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
     	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
-    	Some(Network::ETHEREUM)
+    	Some(Network::from(NamedChain::Mainnet))
     );
     let provider = registry.provider().await?;
     let instance = registry.register(provider, address);
@@ -54,13 +54,15 @@ abirpc!(Erc721Token, Erc721TokenRegistry);
 
 ### Network management
 
-Network initialization is achieved by specifying the desired `ChainId`. Whenever a provider is constructed, its `ChainId` is validated by querying the on-chain configuration.
+Network initialization is achieved via by specifying the desired `NamedChain` or `ChainId`
 
-```rust 
+```rust
+let network = Network::from(NamedChain::Mainnet);
+// OR
 let network = Network::ChainId(1);
 ```
 
- If the initlaized `ChainId` does not match the on-chain configuration, initialization will fail. 
+If the initlaized `ChainId` does not match the on-chain configuration, initialization will fail. 
 
 ```rust
 let registry = Erc20TokenRegistry::<Provider<Ws>>::new(

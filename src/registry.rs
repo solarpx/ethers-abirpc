@@ -1,9 +1,11 @@
-use crate::network::Network;
-use ethers::types::Address;
-use std::{
-    clone::Clone,
-    collections::HashMap,
-    sync::{Arc, RwLock},
+use {
+    crate::network::Network,
+    ethers::types::Address,
+    std::{
+        clone::Clone,
+        collections::HashMap,
+        sync::{Arc, RwLock},
+    },
 };
 
 #[derive(Debug)]
