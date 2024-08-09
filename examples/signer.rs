@@ -9,7 +9,7 @@ use {
     ethers_abirpc::prelude::*,
 };
 
-abigen!(Erc20Token, "./tests/abi/Erc20Token.abi");
+abigen!(Erc20Token, "./tests/abi/Erc20Token.json");
 abirpc!(Erc20Token, Erc20TokenRegistry);
 
 const WETH_ADDRESS: &str = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
