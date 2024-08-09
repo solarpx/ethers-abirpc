@@ -27,7 +27,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let address = address_from!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")?; // WETH
     let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
     	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
-    	Some(Network::from(NamedChain::Mainnet))
+    	Some(Chain::from(NamedChain::Mainnet))
     );
     let provider = registry.provider().await?;
     let instance = registry.register(provider, address);
@@ -59,15 +59,15 @@ Network initialization is achieved via by specifying the desired `NamedChain` or
 ```rust
 let network = Chain::from(NamedChain::Mainnet);
 // OR
-let network = Chain::ChainId(1);
+let network = Chain::Id(1);
 ```
 
-If the initlaized `ChainId` does not match the on-chain configuration, initialization will fail. 
+If the initlaized `Id` does not match the on-chain configured chain id, initialization will fail. 
 
 ```rust
 let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
 	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
-	Some(Chain::ChainId(10)) // Incorrect ChainId
+	Some(Chain::Id(10)) // Incorrect chain id
 );
 let provider = registry.provider().await?; // Error 
 ```
@@ -85,7 +85,7 @@ The crate also includes a wrapper for initialization of all supported providers.
 ```rust
 let provider: Provider<Ws> = AbiProvider::new(
     Some(String::from("wss://ethereum-rpc.publicnode.com")),
-    Some(Network::ChainId(1)),
+    Some(Network::Id(1)),
 )
 .provider()
 .await?;
