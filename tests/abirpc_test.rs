@@ -1,10 +1,9 @@
-use ethers::prelude::abigen;
-use ethers_abirpc::prelude::*;
+use {ethers::prelude::abigen, ethers_abirpc::prelude::*};
 
-abigen!(Erc20Token, "./tests/abi/Erc20Token.abi");
+abigen!(Erc20Token, "./tests/abi/Erc20Token.json");
 abirpc!(Erc20Token, Erc20TokenRegistry);
 
-abigen!(Erc721Token, "./tests/abi/Erc721Token.abi");
+abigen!(Erc721Token, "./tests/abi/Erc721Token.json");
 abirpc!(Erc721Token, Erc721TokenRegistry);
 
 #[tokio::test]

@@ -1,14 +1,19 @@
-use crate::{
-    error::Error,
-    network::{Network, RetryClientConfig},
+use {
+    crate::{
+        chain::{Chain, RetryClientConfig},
+        error::Error,
+    },
+    async_trait::async_trait,
+    ethers::{
+        providers::{
+            Http, HttpRateLimitRetryPolicy, Ipc, Middleware, MockProvider, Provider, RetryClient,
+            RetryClientBuilder, Ws,
+        },
+        types::U256,
+    },
+    std::{path::Path, time::Duration},
+    url::Url,
 };
-use async_trait::async_trait;
-use ethers::providers::{
-    Http, HttpRateLimitRetryPolicy, Ipc, Middleware, MockProvider, Provider, RetryClient,
-    RetryClientBuilder, Ws,
-};
-use std::{path::Path, time::Duration};
-use url::Url;
 
 #[async_trait]
 pub trait AbiProviderTrait<M>
@@ -20,26 +25,28 @@ where
 
 pub struct AbiProvider {
     pub url: Option<String>,
-    pub network: Option<Network>,
+    pub chain: Option<Chain>,
 }
 
 impl AbiProvider {
-    pub fn new(url: Option<String>, network: Option<Network>) -> Self {
-        Self { url, network }
+    pub fn new(url: Option<String>, chain: Option<Chain>) -> Self {
+        Self { url, chain }
     }
 }
 
 macro_rules! assert_chain_id {
-    ($network: expr, $provider: expr) => {
-        if let Some(network) = $network {
-            let chain_id = $provider.get_chainid().await?;
-            if network.get_chainid() != chain_id {
-                let e = format!(
-                    "Configured chain_id ({}) does not match network ({})",
-                    network.get_chainid(),
-                    chain_id
-                );
-                return Err(Error::ChainIdError(e));
+    ($chain: expr, $provider: expr) => {
+        if let Some(chain) = $chain {
+            if chain.assert_chain_id() {
+                let provider_chain_id = $provider.get_chainid().await?;
+                if U256::from(chain.id()) != provider_chain_id {
+                    let e = format!(
+                        "Configured chain_id ({}) does not match chain ({})",
+                        U256::from(chain.id()),
+                        provider_chain_id
+                    );
+                    return Err(Error::ChainIdError(e));
+                }
             }
         }
     };
@@ -52,7 +59,7 @@ impl AbiProviderTrait<Provider<Ws>> for AbiProvider {
             Some(url) => {
                 let url = Url::parse(url)?;
                 let provider = Provider::<Ws>::connect(url).await?;
-                assert_chain_id!(self.network, provider);
+                assert_chain_id!(self.chain, provider);
                 Ok(provider)
             }
             None => Err(Error::Error(String::from("Provider url is None"))),
@@ -66,7 +73,7 @@ impl AbiProviderTrait<Provider<Ipc>> for AbiProvider {
         match &self.url {
             Some(url) => {
                 let provider = Provider::<Ipc>::connect_ipc(Path::new(&url)).await?;
-                assert_chain_id!(self.network, provider);
+                assert_chain_id!(self.chain, provider);
                 Ok(provider)
             }
             None => Err(Error::Error(String::from("Provider url is None"))),
@@ -81,7 +88,7 @@ impl AbiProviderTrait<Provider<Http>> for AbiProvider {
             Some(url) => {
                 let url = Url::parse(url)?;
                 let provider = Provider::<Http>::new(Http::new(url));
-                assert_chain_id!(self.network, provider);
+                assert_chain_id!(self.chain, provider);
                 Ok(provider)
             }
             None => Err(Error::Error(String::from("Provider url is None"))),
@@ -95,8 +102,8 @@ impl AbiProviderTrait<Provider<RetryClient<Http>>> for AbiProvider {
         match &self.url {
             Some(url) => {
                 let url = Url::parse(url)?;
-                let retry_config = match self.network {
-                    Some(network) => network.retry_client_config(),
+                let retry_config = match self.chain {
+                    Some(chain) => chain.retry_client_config(),
                     None => RetryClientConfig::default(),
                 };
 
@@ -107,7 +114,7 @@ impl AbiProviderTrait<Provider<RetryClient<Http>>> for AbiProvider {
                         .initial_backoff(Duration::from_millis(retry_config.initial_backoff_ms))
                         .build(Http::new(url), Box::new(HttpRateLimitRetryPolicy)),
                 );
-                assert_chain_id!(self.network, provider);
+                assert_chain_id!(self.chain, provider);
                 Ok(provider)
             }
             None => Err(Error::Error(String::from("Provider url is None"))),
