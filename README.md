@@ -57,9 +57,9 @@ abirpc!(Erc721Token, Erc721TokenRegistry);
 Network initialization is achieved via by specifying the desired `NamedChain` or `ChainId`
 
 ```rust
-let network = Network::from(NamedChain::Mainnet);
+let network = Chain::from(NamedChain::Mainnet);
 // OR
-let network = Network::ChainId(1);
+let network = Chain::ChainId(1);
 ```
 
 If the initlaized `ChainId` does not match the on-chain configuration, initialization will fail. 
@@ -67,7 +67,7 @@ If the initlaized `ChainId` does not match the on-chain configuration, initializ
 ```rust
 let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
 	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
-	Some(Network::ChainId(10)) // Incorrect ChainId
+	Some(Chain::ChainId(10)) // Incorrect ChainId
 );
 let provider = registry.provider().await?; // Error 
 ```
@@ -75,7 +75,7 @@ let provider = registry.provider().await?; // Error
 It is also possible to configure a network by passing a `NetworkConfig`. This provides granular control over all parameters. In the default case, `ChainId` is set to `None` bypassing on-chain validation.
 
 ```rust 
-let network = Network::NetworkConfig(NetworkConfig::default())
+let network = Chain::ChainConfig(ChainConfig::default())
 ```
 
 ### Provider management

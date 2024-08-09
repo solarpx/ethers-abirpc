@@ -1,6 +1,5 @@
 use {
     crate::{error::Error, named::NamedChain},
-    ethers::types::U256,
     std::clone::Clone,
     strum_macros::Display,
 };
@@ -30,27 +29,27 @@ pub struct ChainConfig {
 
 #[derive(Debug, PartialEq, Copy, Clone, Display)]
 pub enum Chain {
-    ChainId(u64),
+    Id(u64),
     ChainConfig(ChainConfig),
 }
 
 impl From<NamedChain> for Chain {
     fn from(named: NamedChain) -> Self {
-        Self::ChainId(named as u64)
+        Self::Id(named as u64)
     }
 }
 
 impl Chain {
-    pub fn get_chainid(&self) -> Option<U256> {
+    pub fn id(&self) -> Option<u64> {
         match self {
-            Chain::ChainId(chain_id) => Some(U256::from(*chain_id)),
-            Chain::ChainConfig(config) => config.chain_id.map(U256::from),
+            Chain::Id(chain_id) => Some(*chain_id),
+            Chain::ChainConfig(config) => config.chain_id.map(u64::from),
         }
     }
 
-    pub fn as_named_chain(&self) -> Result<NamedChain, Error> {
+    pub fn named(&self) -> Result<NamedChain, Error> {
         match self {
-            Chain::ChainId(chain_id) => {
+            Chain::Id(chain_id) => {
                 NamedChain::try_from(*chain_id).map_err(|e| Error::NamedChainError(e))
             }
             Chain::ChainConfig(config) => match config.chain_id {
@@ -64,8 +63,7 @@ impl Chain {
 
     pub fn retry_client_config(&self) -> RetryClientConfig {
         match self {
-            Chain::ChainConfig(config) => config.retry_client_config,
-            Chain::ChainId(chain_id) => match NamedChain::try_from(*chain_id) {
+            Chain::Id(chain_id) => match NamedChain::try_from(*chain_id) {
                 Ok(named) => {
                     let initial_backoff_ms_default =
                         RetryClientConfig::default().initial_backoff_ms;
@@ -83,6 +81,7 @@ impl Chain {
                 }
                 Err(_) => RetryClientConfig::default(),
             },
+            Chain::ChainConfig(config) => config.retry_client_config,
         }
     }
 }

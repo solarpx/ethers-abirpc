@@ -5,7 +5,7 @@ use {
 
 const TEST_HTTP_PROVIDER: &str = "https://ethereum.publicnode.com";
 const TEST_WS_PROVIDER: &str = "wss://ethereum-rpc.publicnode.com";
-const TEST_CHAIN: Chain = Chain::ChainId(1);
+const TEST_CHAIN: Chain = Chain::Id(1);
 
 #[tokio::test]
 async fn test_ws() -> Result<(), Box<dyn std::error::Error>> {
@@ -31,7 +31,7 @@ async fn test_ws_wrong_url() -> Result<(), Box<dyn std::error::Error>> {
 #[tokio::test]
 async fn test_ws_wrong_chain_id() -> Result<(), Box<dyn std::error::Error>> {
     let provider: Result<Provider<Ws>, _> =
-        AbiProvider::new(Some(TEST_WS_PROVIDER.into()), Some(Chain::ChainId(10)))
+        AbiProvider::new(Some(TEST_WS_PROVIDER.into()), Some(Chain::Id(10)))
             .provider()
             .await;
 

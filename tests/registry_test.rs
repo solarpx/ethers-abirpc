@@ -13,7 +13,7 @@ abirpc!(Erc20Token, Erc20TokenRegistry);
 const TEST_HTTP_PROVIDER: &str = "https://ethereum.publicnode.com";
 const TEST_WS_PROVIDER: &str = "wss://ethereum-rpc.publicnode.com";
 
-const TEST_CHAIN: Chain = Chain::ChainId(1);
+const TEST_CHAIN: Chain = Chain::Id(1);
 const TEST_ADDRESS: &str = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"; // WETH
 
 #[tokio::test]

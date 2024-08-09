@@ -18,9 +18,7 @@ async fn test_chain_from_named_chain() -> Result<(), Box<dyn std::error::Error>>
 
 #[tokio::test]
 async fn test_named_chain_from_chain() -> Result<(), Box<dyn std::error::Error>> {
-    let chain = Chain::ChainId(1);
-
-    let named = chain.as_named_chain()?;
+    let named = Chain::Id(1).named()?;
 
     assert_eq!(named, NamedChain::Mainnet);
 
@@ -29,7 +27,7 @@ async fn test_named_chain_from_chain() -> Result<(), Box<dyn std::error::Error>>
 
 #[tokio::test]
 async fn test_chain_from_chain_id() -> Result<(), Box<dyn std::error::Error>> {
-    let chain = Chain::ChainId(1);
+    let chain = Chain::Id(1);
 
     let _provider: Provider<Http> = AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(chain))
         .provider()
@@ -66,7 +64,7 @@ async fn test_chain_from_config_default() -> Result<(), Box<dyn std::error::Erro
             .provider()
             .await?;
 
-    assert_eq!(chain.get_chainid(), None);
+    assert_eq!(chain.id(), None);
 
     Ok(())
 }

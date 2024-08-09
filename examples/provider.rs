@@ -7,7 +7,7 @@ use {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider: Provider<Ws> = AbiProvider::new(
         Some(String::from("wss://ethereum-rpc.publicnode.com")),
-        Some(Chain::ChainId(1)),
+        Some(Chain::Id(1)),
     )
     .provider()
     .await?;

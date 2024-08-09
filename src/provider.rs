@@ -4,9 +4,12 @@ use {
         error::Error,
     },
     async_trait::async_trait,
-    ethers::providers::{
-        Http, HttpRateLimitRetryPolicy, Ipc, Middleware, MockProvider, Provider, RetryClient,
-        RetryClientBuilder, Ws,
+    ethers::{
+        providers::{
+            Http, HttpRateLimitRetryPolicy, Ipc, Middleware, MockProvider, Provider, RetryClient,
+            RetryClientBuilder, Ws,
+        },
+        types::U256,
     },
     std::{path::Path, time::Duration},
     url::Url,
@@ -34,7 +37,7 @@ impl AbiProvider {
 macro_rules! assert_chain_id {
     ($chain: expr, $provider: expr) => {
         if let Some(chain) = $chain {
-            if let Some(chain_id) = chain.get_chainid() {
+            if let Some(chain_id) = chain.id().map(U256::from) {
                 let provider_chain_id = $provider.get_chainid().await?;
                 if chain_id != provider_chain_id {
                     let e = format!(
