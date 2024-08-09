@@ -9,7 +9,7 @@ Provider<RetryClient<Http>>
 Provider<Ipc>
 Provider<MockProvider>
 ```
-### Usage 
+## Overview 
 
 `abirpc!` generates an API to manage deployed contract instances as shown in the example below. 
 
@@ -41,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 Note that the `abigen!` macro generates the rust bindings for the contract ABI, and is required for `abirpc!` to function. 
 
-### ABI management
+## ABI management
 
 ABI files can be located anywhere on the system, and multiple ABIs can be initialized within the same `.rs` file. 
 
@@ -55,7 +55,7 @@ abigen!(Erc721Token, "./abi/Erc721Token.abi");
 abirpc!(Erc721Token, Erc721TokenRegistry);
 ```
 
-### Network management
+## Network management
 
 Network implementation is consistent with the [`alloy`](https://github.com/alloy-rs/alloy) API.
 
@@ -81,7 +81,7 @@ Passing a `ChainConfig` provides granular control over all configuration paramet
 let chain = Chain::ChainConfig(ChainConfig::default())
 ```
 
-### Provider management
+## Provider management
 
 The crate also includes a wrapper for initialization of supported providers. This is helpful for interactions not requiring an ABI.
 
