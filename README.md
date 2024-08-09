@@ -20,7 +20,7 @@ use ethers::{
 };
 use ethers_abirpc::prelude::*;
 
-abigen!(Erc20Token, "./abi/Erc20Token.abi"); // Path to abi (json)
+abigen!(Erc20Token, "./abi/Erc20Token.json"); // Path to abi
 abirpc!(Erc20Token, Erc20TokenRegistry);
 
 #[tokio::main]
@@ -48,10 +48,10 @@ ABI files can be located anywhere on the system, and multiple ABIs can be initia
 ```rust
 use ethers_abirpc::prelude::*;
 
-abigen!(Erc20Token, "./abi/Erc20Token.abi"); 
+abigen!(Erc20Token, "./abi/Erc20Token.json"); 
 abirpc!(Erc20Token, Erc20TokenRegistry);
 
-abigen!(Erc721Token, "./abi/Erc721Token.abi"); 
+abigen!(Erc721Token, "./abi/Erc721Token.json"); 
 abirpc!(Erc721Token, Erc721TokenRegistry);
 ```
 

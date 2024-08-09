@@ -6,7 +6,7 @@ use {
     ethers_abirpc::prelude::*,
 };
 
-abigen!(Erc20Token, "./tests/abi/Erc20Token.abi");
+abigen!(Erc20Token, "./tests/abi/Erc20Token.json");
 abirpc!(Erc20Token, Erc20TokenRegistry);
 
 const WS_PROVIDER: &str = "wss://ethereum-rpc.publicnode.com";

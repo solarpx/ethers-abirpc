@@ -7,7 +7,7 @@ use {
     ethers_abirpc::prelude::*,
 };
 
-abigen!(Erc20Token, "./tests/abi/Erc20Token.abi");
+abigen!(Erc20Token, "./tests/abi/Erc20Token.json");
 abirpc!(Erc20Token, Erc20TokenRegistry);
 
 const TEST_HTTP_PROVIDER: &str = "https://ethereum.publicnode.com";
