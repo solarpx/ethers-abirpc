@@ -1,6 +1,6 @@
 use {
     crate::{error::Error, named::NamedChain},
-    std::clone::Clone,
+    std::{clone::Clone, cmp},
     strum_macros::Display,
 };
 
@@ -23,8 +23,9 @@ impl Default for RetryClientConfig {
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub struct ChainConfig {
-    pub chain_id: Option<u64>,
+    pub chain_id: u64,
     pub retry_client_config: RetryClientConfig,
+    pub assert_chain_id: bool,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone, Display)]
@@ -40,24 +41,21 @@ impl From<NamedChain> for Chain {
 }
 
 impl Chain {
-    pub fn id(&self) -> Option<u64> {
+    pub fn id(&self) -> u64 {
         match self {
-            Chain::Id(chain_id) => Some(*chain_id),
-            Chain::ChainConfig(config) => config.chain_id.map(u64::from),
+            Chain::Id(chain_id) => *chain_id,
+            Chain::ChainConfig(config) => config.chain_id,
         }
     }
 
-    pub fn named(&self) -> Result<NamedChain, Error> {
+    pub fn named(&self) -> Option<NamedChain> {
         match self {
-            Chain::Id(chain_id) => {
-                NamedChain::try_from(*chain_id).map_err(|e| Error::NamedChainError(e))
-            }
-            Chain::ChainConfig(config) => match config.chain_id {
-                Some(chain_id) => {
-                    NamedChain::try_from(chain_id).map_err(|e| Error::NamedChainError(e))
-                }
-                None => Err(Error::Error(String::from("Configured chain_id is None"))),
-            },
+            Chain::Id(chain_id) => NamedChain::try_from(*chain_id)
+                .map_err(Error::NamedChainError)
+                .ok(),
+            Chain::ChainConfig(config) => NamedChain::try_from(config.chain_id)
+                .map_err(Error::NamedChainError)
+                .ok(),
         }
     }
 
@@ -65,14 +63,14 @@ impl Chain {
         match self {
             Chain::Id(chain_id) => match NamedChain::try_from(*chain_id) {
                 Ok(named) => {
-                    let initial_backoff_ms_default =
-                        RetryClientConfig::default().initial_backoff_ms;
+                    let default = RetryClientConfig::default().initial_backoff_ms;
 
                     let initial_backoff_ms = match named.average_blocktime_hint() {
                         Some(duration) => {
-                            initial_backoff_ms_default.min((duration.as_millis() as u64) / 2_u64)
+                            let interval = (duration.as_millis() as u64) / 10;
+                            cmp::max(100, cmp::min(default, interval))
                         }
-                        None => initial_backoff_ms_default,
+                        None => default,
                     };
                     RetryClientConfig {
                         initial_backoff_ms,
@@ -82,6 +80,13 @@ impl Chain {
                 Err(_) => RetryClientConfig::default(),
             },
             Chain::ChainConfig(config) => config.retry_client_config,
+        }
+    }
+
+    pub fn assert_chain_id(&self) -> bool {
+        match self {
+            Chain::Id(_) => true,
+            Chain::ChainConfig(config) => config.assert_chain_id,
         }
     }
 }

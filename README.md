@@ -54,28 +54,28 @@ abirpc!(Erc721Token, Erc721TokenRegistry);
 
 ### Network management
 
-Network initialization is achieved via by specifying the desired `NamedChain` or `ChainId`
+Network management is implemented in a manner that is consistent with the [`alloy`](https://crates.io/crates/alloy) API. Network initialization is achieved by specifying a `NamedChain` or `Id`.
 
 ```rust
-let network = Chain::from(NamedChain::Mainnet);
+let chain = Chain::from(NamedChain::Mainnet);
 // OR
-let network = Chain::Id(1);
+let chain = Chain::Id(1);
 ```
 
-If the initlaized `Id` does not match the on-chain configured chain id, initialization will fail. 
+If the initlaized `Id` does not match the on-chain configuration, initialization will fail.
 
 ```rust
 let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
 	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
-	Some(Chain::Id(10)) // Incorrect chain id
+	Some(Chain::Id(10)) // Incorrect ChainId
 );
 let provider = registry.provider().await?; // Error 
 ```
 
-It is also possible to configure a network by passing a `NetworkConfig`. This provides granular control over all parameters. In the default case, `ChainId` is set to `None` bypassing on-chain validation.
+It is also possible to initialize a chain by passing a `ChainConfig`. This provides granular control over all configuration parameters.
 
 ```rust 
-let network = Chain::ChainConfig(ChainConfig::default())
+let chain = Chain::ChainConfig(ChainConfig::default())
 ```
 
 ### Provider management
@@ -85,7 +85,7 @@ The crate also includes a wrapper for initialization of all supported providers.
 ```rust
 let provider: Provider<Ws> = AbiProvider::new(
     Some(String::from("wss://ethereum-rpc.publicnode.com")),
-    Some(Network::Id(1)),
+    Some(Chain::Id(1)),
 )
 .provider()
 .await?;

@@ -18,9 +18,8 @@ async fn test_chain_from_named_chain() -> Result<(), Box<dyn std::error::Error>>
 
 #[tokio::test]
 async fn test_named_chain_from_chain() -> Result<(), Box<dyn std::error::Error>> {
-    let named = Chain::Id(1).named()?;
-
-    assert_eq!(named, NamedChain::Mainnet);
+    assert_eq!(Chain::Id(1).named(), Some(NamedChain::Mainnet));
+    assert_eq!(Chain::Id(0).named(), None);
 
     Ok(())
 }
@@ -39,12 +38,13 @@ async fn test_chain_from_chain_id() -> Result<(), Box<dyn std::error::Error>> {
 #[tokio::test]
 async fn test_chain_from_config() -> Result<(), Box<dyn std::error::Error>> {
     let chain = Chain::ChainConfig(ChainConfig {
-        chain_id: Some(1),
+        chain_id: 1,
         retry_client_config: RetryClientConfig {
             rate_limit_retries: 5,
             timeout_retries: 2,
             initial_backoff_ms: 200,
         },
+        assert_chain_id: true,
     });
 
     let _provider: Provider<RetryClient<Http>> =
@@ -64,7 +64,9 @@ async fn test_chain_from_config_default() -> Result<(), Box<dyn std::error::Erro
             .provider()
             .await?;
 
-    assert_eq!(chain.id(), None);
+    assert_eq!(chain.id(), 0_u64);
+    assert_eq!(chain.retry_client_config(), RetryClientConfig::default());
+    assert_eq!(chain.assert_chain_id(), false);
 
     Ok(())
 }
