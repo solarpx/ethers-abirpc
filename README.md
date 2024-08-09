@@ -11,7 +11,7 @@ Provider<MockProvider>
 ```
 ## Overview 
 
-`abirpc!` generates an API to manage deployed contract instances as shown in the example below. 
+`abirpc!` generates an API to manage deployed smart contract instances as shown in the example below. 
 
 ```rust
 use ethers::{
