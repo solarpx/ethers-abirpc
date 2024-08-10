@@ -1,21 +1,36 @@
 [package]
-name = "ethers-abirpc"
-version = "0.2.0"
-edition = "2021"
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/solarpx/ethers-abirpc"
-homepage = "https://github.com/solarpx/ethers-abirpc"
-categories = ["cryptography::cryptocurrencies"]
-keywords = ["crypto", "ethers", "ethereum", "web3", "celo"]
-description = "ethers-rs provider encapsulation for ethereum smart contrcats"
+name = 'ethers-abirpc'
+version = '0.2.0'
+edition = '2021'
+license = 'MIT OR Apache-2.0'
+repository = 'https://github.com/solarpx/ethers-abirpc'
+homepage = 'https://github.com/solarpx/ethers-abirpc'
+categories = ['cryptography::cryptocurrencies']
+keywords = [
+    'crypto',
+    'ethers',
+    'ethereum',
+    'web3',
+    'celo',
+]
+description = 'ethers-rs provider encapsulation for ethereum smart contrcats'
 
 [dependencies]
-tokio = { version = "1.29.1", features = ["full"] }
-rustc-hex = "2.1.0"
-thiserror = "1.0.47"
-strum_macros = "0.25.2"
-ethers = { version = "2.0.14", features = ["ws", "ipc"] }
-url = "2.4.1"
-async-trait = "0.1.74"
-strum = "0.26.3"
-num_enum = "0.7.3"
+rustc-hex = '2.1.0'
+thiserror = '1.0.47'
+strum_macros = '0.25.2'
+url = '2.4.1'
+async-trait = '0.1.74'
+strum = '0.26.3'
+num_enum = '0.7.3'
+
+[dependencies.tokio]
+version = '1.29.1'
+features = ['full']
+
+[dependencies.ethers]
+version = '2.0.14'
+features = [
+    'ws',
+    'ipc',
+]
