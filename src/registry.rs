@@ -1,23 +1,25 @@
-use crate::network::Network;
-use ethers::types::Address;
-use std::{
-    clone::Clone,
-    collections::HashMap,
-    sync::{Arc, RwLock},
+use {
+    crate::chain::Chain,
+    ethers::types::Address,
+    std::{
+        clone::Clone,
+        collections::HashMap,
+        sync::{Arc, RwLock},
+    },
 };
 
 #[derive(Debug)]
 pub struct AbiRegistry<C> {
     pub url: Option<String>,
-    pub network: Option<Network>,
+    pub chain: Option<Chain>,
     pub registry: Arc<RwLock<HashMap<Address, C>>>,
 }
 
 impl<C> AbiRegistry<C> {
-    pub fn new(url: Option<String>, network: Option<Network>) -> Self {
+    pub fn new(url: Option<String>, chain: Option<Chain>) -> Self {
         Self {
             url,
-            network,
+            chain,
             registry: Arc::new(RwLock::new(HashMap::new())),
         }
     }
@@ -56,7 +58,7 @@ macro_rules! abirpc {
             ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ws>, $crate::error::Error>
             {
                 let provider: ::ethers::prelude::Provider<::ethers::prelude::Ws> =
-                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
 
@@ -73,7 +75,7 @@ macro_rules! abirpc {
             ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ipc>, $crate::error::Error>
             {
                 let provider: ::ethers::prelude::Provider<::ethers::prelude::Ipc> =
-                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
 
@@ -91,7 +93,7 @@ macro_rules! abirpc {
             ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Http>, $crate::error::Error>
             {
                 let provider: ::ethers::prelude::Provider<::ethers::prelude::Http> =
-                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
 
@@ -122,7 +124,7 @@ macro_rules! abirpc {
             > {
                 let provider: ::ethers::prelude::Provider<
                     ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-                > = $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                > = $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.chain)
                     .provider()
                     .await?;
 
@@ -143,7 +145,7 @@ macro_rules! abirpc {
                 $crate::error::Error,
             > {
                 let provider: ::ethers::prelude::Provider<::ethers::prelude::MockProvider> =
-                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.network)
+                    $crate::provider::AbiProvider::new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
 
@@ -155,8 +157,8 @@ macro_rules! abirpc {
         where
             M: ::ethers::prelude::Middleware,
         {
-            pub fn new(url: Option<String>, network: Option<$crate::network::Network>) -> Self {
-                let registry = $crate::registry::AbiRegistry::<$abi<M>>::new(url, network);
+            pub fn new(url: Option<String>, chain: Option<$crate::chain::Chain>) -> Self {
+                let registry = $crate::registry::AbiRegistry::<$abi<M>>::new(url, chain);
                 Self(registry)
             }
 
@@ -174,8 +176,8 @@ macro_rules! abirpc {
                 instance
             }
 
-            pub fn network(&self) -> Option<$crate::network::Network> {
-                self.0.network
+            pub fn chain(&self) -> Option<$crate::chain::Chain> {
+                self.0.chain
             }
         }
 

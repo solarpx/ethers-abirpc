@@ -8,6 +8,8 @@ pub enum Error {
     AddressParseError(#[from] rustc_hex::FromHexError),
     #[error("ChainId error: {0}")]
     ChainIdError(String),
+    #[error("ChainId error: {0}")]
+    NamedChainError(#[from] num_enum::TryFromPrimitiveError<crate::named::NamedChain>),
     #[error("Error: {0}")]
     Error(String),
     #[error("Provider error: {0}")]
