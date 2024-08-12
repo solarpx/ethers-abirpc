@@ -41,20 +41,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 Note that the `abigen!` macro generates the rust bindings for the contract ABI, and is required for `abirpc!` to function. 
 
-## ABI management
-
-ABI files can be located anywhere on the system, and multiple ABIs can be initialized within the same `.rs` file. 
-
-```rust
-use ethers_abirpc::prelude::*;
-
-abigen!(Erc20Token, "./abi/Erc20Token.json"); 
-abirpc!(Erc20Token, Erc20TokenRegistry);
-
-abigen!(Erc721Token, "./abi/Erc721Token.json"); 
-abirpc!(Erc721Token, Erc721TokenRegistry);
-```
-
 ## Network management
 
 Network implementation is consistent with the [`alloy`](https://github.com/alloy-rs/alloy) API.
@@ -98,3 +84,18 @@ while let Some(block) = stream.next().await {
     println!("{:?}", block)
 }
 ```
+
+## ABI management
+
+ABI files can be located anywhere on the system, and multiple ABIs can be initialized within the same `.rs` file. 
+
+```rust
+use ethers_abirpc::prelude::*;
+
+abigen!(Erc20Token, "./abi/Erc20Token.json"); 
+abirpc!(Erc20Token, Erc20TokenRegistry);
+
+abigen!(Erc721Token, "./abi/Erc721Token.json"); 
+abirpc!(Erc721Token, Erc721TokenRegistry);
+```
+
