@@ -1,6 +1,10 @@
 # ethers-abirpc
 
-This crate defines the `abirpc!` macro along with several other utilites for [ethers-rs](https://github.com/gakonst/ethers-rs) provider encapsulation. The `abirpc!` macro is implemented as an extension of ethers-rs `abigen!`. The following ethers-rs provider types are supported:
+`ethers-abirpc` allows users to efficiently manage multiple smart contract instances across multiple blockchains within the same application contxet via a simple API. 
+
+## Overview 
+
+The crate defines the `abirpc!` macro along with several other utilites for [ethers-rs](https://github.com/gakonst/ethers-rs) provider encapsulation. The following ethers-rs provider types are supported:
 
 ```rust
 Provider<Ws>
@@ -9,9 +13,8 @@ Provider<RetryClient<Http>>
 Provider<Ipc>
 Provider<MockProvider>
 ```
-## Overview 
 
-`abirpc!` generates an API to manage deployed smart contract instances as shown in the example below. 
+The `abirpc!` macro is implemented as an extension of ethers-rs `abigen!` as shown in the example below.
 
 ```rust
 use ethers::{
@@ -39,11 +42,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-Note that the `abigen!` macro generates the rust bindings for the contract ABI, and is required for `abirpc!` to function. 
+Note that the `abigen!` macro generates the rust bindings for the contract ABI, and is required for `abirpc!` to function.
 
 ## Network management
 
-Network implementation is consistent with the [alloy](https://github.com/alloy-rs/alloy) API.
+Network implementation is consistent with the [alloy](https://github.com/alloy-rs/alloy).
 
 ```rust
 let chain = Chain::from(NamedChain::Mainnet);
@@ -61,7 +64,7 @@ let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
 let provider = registry.provider().await?; // Error 
 ```
 
-Passing a `ChainConfig` provides granular control over all configuration parameters.
+Passing a `ChainConfig` provides granular control over all configuration parameters, including the enforcement of chain `Id` checks.
 
 ```rust 
 let chain = Chain::ChainConfig(ChainConfig::default())
@@ -69,7 +72,7 @@ let chain = Chain::ChainConfig(ChainConfig::default())
 
 ## Provider management
 
-The crate also includes a wrapper for initialization of supported providers. This is helpful for interactions not requiring an ABI.
+The crate also includes a wrapper for direct initialization of supported `ethers-rs` provider types. This is helpful for interactions not requiring an ABI.
 
 ```rust
 let provider: Provider<Ws> = AbiProvider::new(
@@ -87,7 +90,7 @@ while let Some(block) = stream.next().await {
 
 ## ABI management
 
-ABI files can be located anywhere on the system, and multiple ABIs can be initialized within the same `.rs` file. 
+ABI files can be located anywhere on the system, and multiple ABIs can be initialized within the same `.rs` file.
 
 ```rust
 use ethers_abirpc::prelude::*;
@@ -99,3 +102,7 @@ abigen!(Erc721Token, "./abi/Erc721Token.json");
 abirpc!(Erc721Token, Erc721TokenRegistry);
 ```
 
+## Release notes
+
+- 0.2.0: Stable release, `SemVer` forwrd compatible
+- 0.1.x: Development versions
