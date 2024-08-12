@@ -1,10 +1,10 @@
 # ethers-abirpc
 
-`ethers-abirpc` allows users to efficiently manage multiple smart contract instances across multiple blockchains within the same application contxet via a simple API. 
+`ethers-abirpc` allows users to efficiently manage multiple smart contract instances across multiple blockchains within the same application context via a simple API. 
 
 ## Overview 
 
-The crate defines the `abirpc!` macro along with several other utilites for [ethers-rs](https://github.com/gakonst/ethers-rs) provider encapsulation. The following ethers-rs provider types are supported:
+The crate defines the `abirpc!` macro along with several other utilities for [ethers-rs](https://github.com/gakonst/ethers-rs) provider encapsulation. The following ethers-rs provider types are supported:
 
 ```rust
 Provider<Ws>
@@ -104,5 +104,5 @@ abirpc!(Erc721Token, Erc721TokenRegistry);
 
 ## Release notes
 
-- 0.2.0: Stable release, `SemVer` forwrd compatible
+- 0.2.0: Stable release, `SemVer` forward compatible
 - 0.1.x: Development versions
