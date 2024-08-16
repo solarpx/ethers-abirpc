@@ -30,8 +30,8 @@ abirpc!(Erc20Token, Erc20TokenRegistry);
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let address = address_from!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")?; // WETH
     let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
-    	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
-    	Some(Chain::from(NamedChain::Mainnet))
+    	String::from("wss://ethereum-rpc.publicnode.com"), 
+    	Chain::from(NamedChain::Mainnet)
     );
     let provider = registry.provider().await?;
     let instance = registry.register(provider, address);
@@ -58,8 +58,8 @@ If the chain `Id` does not match the on-chain configuration, initialization will
 
 ```rust
 let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
-	Some(String::from("wss://ethereum-rpc.publicnode.com")), 
-	Some(Chain::Id(10)) // Incorrect ChainId
+	String::from("wss://ethereum-rpc.publicnode.com"), 
+	Chain::Id(10) // Incorrect ChainId
 );
 let provider = registry.provider().await?; // Error 
 ```
@@ -76,8 +76,8 @@ The crate also includes a wrapper for direct initialization of supported `ethers
 
 ```rust
 let provider: Provider<Ws> = AbiProvider::new(
-    Some(String::from("wss://ethereum-rpc.publicnode.com")),
-    Some(Chain::Id(1)),
+    String::from("wss://ethereum-rpc.publicnode.com"),
+    Chain::Id(1),
 )
 .provider()
 .await?;

@@ -6,8 +6,8 @@ use {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider: Provider<Ws> = AbiProvider::new(
-        Some(String::from("wss://ethereum-rpc.publicnode.com")),
-        Some(Chain::Id(1)),
+        String::from("wss://ethereum-rpc.publicnode.com"),
+        Chain::Id(1),
     )
     .provider()
     .await?;

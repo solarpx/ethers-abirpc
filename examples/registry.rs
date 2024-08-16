@@ -15,10 +15,7 @@ const WBTC_ADDRESS: &str = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
-        Some(String::from(WS_PROVIDER)),
-        Some(Chain::Id(1)),
-    );
+    let registry = Erc20TokenRegistry::<Provider<Ws>>::new(String::from(WS_PROVIDER), Chain::Id(1));
 
     let provider = registry.provider().await?;
 

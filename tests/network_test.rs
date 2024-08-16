@@ -9,7 +9,7 @@ const TEST_HTTP_PROVIDER: &str = "https://ethereum.publicnode.com";
 async fn test_chain_from_named_chain() -> Result<(), Box<dyn std::error::Error>> {
     let chain = Chain::from(NamedChain::Mainnet);
 
-    let _provider: Provider<Http> = AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(chain))
+    let _provider: Provider<Http> = AbiProvider::new(TEST_HTTP_PROVIDER.into(), chain)
         .provider()
         .await?;
 
@@ -28,7 +28,7 @@ async fn test_named_chain_from_chain() -> Result<(), Box<dyn std::error::Error>>
 async fn test_chain_from_chain_id() -> Result<(), Box<dyn std::error::Error>> {
     let chain = Chain::Id(1);
 
-    let _provider: Provider<Http> = AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(chain))
+    let _provider: Provider<Http> = AbiProvider::new(TEST_HTTP_PROVIDER.into(), chain)
         .provider()
         .await?;
 
@@ -47,10 +47,9 @@ async fn test_chain_from_config() -> Result<(), Box<dyn std::error::Error>> {
         assert_chain_id: true,
     });
 
-    let _provider: Provider<RetryClient<Http>> =
-        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(chain))
-            .provider()
-            .await?;
+    let _provider: Provider<RetryClient<Http>> = AbiProvider::new(TEST_HTTP_PROVIDER.into(), chain)
+        .provider()
+        .await?;
 
     Ok(())
 }
@@ -59,10 +58,9 @@ async fn test_chain_from_config() -> Result<(), Box<dyn std::error::Error>> {
 async fn test_chain_from_config_default() -> Result<(), Box<dyn std::error::Error>> {
     let chain = Chain::ChainConfig(ChainConfig::default());
 
-    let _provider: Provider<RetryClient<Http>> =
-        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(chain))
-            .provider()
-            .await?;
+    let _provider: Provider<RetryClient<Http>> = AbiProvider::new(TEST_HTTP_PROVIDER.into(), chain)
+        .provider()
+        .await?;
 
     assert_eq!(chain.id(), 0_u64);
     assert_eq!(chain.retry_client_config(), RetryClientConfig::default());

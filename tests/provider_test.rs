@@ -9,7 +9,7 @@ const TEST_CHAIN: Chain = Chain::Id(1);
 
 #[tokio::test]
 async fn test_ws() -> Result<(), Box<dyn std::error::Error>> {
-    let _provider: Provider<Ws> = AbiProvider::new(Some(TEST_WS_PROVIDER.into()), Some(TEST_CHAIN))
+    let _provider: Provider<Ws> = AbiProvider::new(TEST_WS_PROVIDER.into(), TEST_CHAIN)
         .provider()
         .await?;
 
@@ -18,10 +18,9 @@ async fn test_ws() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn test_ws_wrong_url() -> Result<(), Box<dyn std::error::Error>> {
-    let provider: Result<Provider<Ws>, _> =
-        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(TEST_CHAIN))
-            .provider()
-            .await;
+    let provider: Result<Provider<Ws>, _> = AbiProvider::new(TEST_HTTP_PROVIDER.into(), TEST_CHAIN)
+        .provider()
+        .await;
 
     assert!(provider.is_err());
 
@@ -31,7 +30,7 @@ async fn test_ws_wrong_url() -> Result<(), Box<dyn std::error::Error>> {
 #[tokio::test]
 async fn test_ws_wrong_chain_id() -> Result<(), Box<dyn std::error::Error>> {
     let provider: Result<Provider<Ws>, _> =
-        AbiProvider::new(Some(TEST_WS_PROVIDER.into()), Some(Chain::Id(10)))
+        AbiProvider::new(TEST_WS_PROVIDER.into(), Chain::Id(10))
             .provider()
             .await;
 
@@ -42,10 +41,9 @@ async fn test_ws_wrong_chain_id() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn test_http() -> Result<(), Box<dyn std::error::Error>> {
-    let _provider: Provider<Http> =
-        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(TEST_CHAIN))
-            .provider()
-            .await?;
+    let _provider: Provider<Http> = AbiProvider::new(TEST_HTTP_PROVIDER.into(), TEST_CHAIN)
+        .provider()
+        .await?;
 
     Ok(())
 }
@@ -53,7 +51,7 @@ async fn test_http() -> Result<(), Box<dyn std::error::Error>> {
 #[tokio::test]
 async fn test_retry_client() -> Result<(), Box<dyn std::error::Error>> {
     let _provider: Provider<RetryClient<Http>> =
-        AbiProvider::new(Some(TEST_HTTP_PROVIDER.into()), Some(TEST_CHAIN))
+        AbiProvider::new(TEST_HTTP_PROVIDER.into(), TEST_CHAIN)
             .provider()
             .await?;
 
@@ -62,7 +60,7 @@ async fn test_retry_client() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn test_mock_provider() -> Result<(), Box<dyn std::error::Error>> {
-    let _provider: Provider<MockProvider> = AbiProvider::new(None, None).provider().await?;
+    let _provider: Provider<MockProvider> = AbiProvider::mock().provider().await?;
 
     Ok(())
 }

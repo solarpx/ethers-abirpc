@@ -29,8 +29,22 @@ pub struct AbiProvider {
 }
 
 impl AbiProvider {
-    pub fn new(url: Option<String>, chain: Option<Chain>) -> Self {
+    pub fn _new(url: Option<String>, chain: Option<Chain>) -> Self {
         Self { url, chain }
+    }
+
+    pub fn new(url: String, chain: Chain) -> Self {
+        Self {
+            url: Some(url),
+            chain: Some(chain),
+        }
+    }
+
+    pub fn mock() -> Self {
+        Self {
+            url: None,
+            chain: None,
+        }
     }
 }
 

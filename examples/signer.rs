@@ -17,7 +17,7 @@ const LOCAL_WALLET: &str = "380eb0f3d505f087e438eca80bc4df9a7faa24f868e69fc04402
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let registry = Erc20TokenRegistry::<Provider<MockProvider>>::new(None, None);
+    let registry = Erc20TokenRegistry::<Provider<MockProvider>>::mock();
 
     let weth_address = address_from!(WETH_ADDRESS)?;
 
