@@ -104,5 +104,5 @@ abirpc!(Erc721Token, Erc721TokenRegistry);
 
 ## Release notes
 
-- 0.2.0: Stable release, `SemVer` forward compatible
+- 0.2.0: Stabilized API. `SemVer` forward compatibility.
 - 0.1.x: Development versions
