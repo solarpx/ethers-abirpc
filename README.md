@@ -46,7 +46,7 @@ Note that the `abigen!` macro generates the rust bindings for the contract ABI, 
 
 ## Network management
 
-Network implementation is consistent with the [alloy](https://github.com/alloy-rs/alloy).
+Network implementation is consistent with the [alloy](https://github.com/alloy-rs/alloy) API.
 
 ```rust
 let chain = Chain::from(NamedChain::Mainnet);
