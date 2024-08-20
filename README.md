@@ -78,17 +78,17 @@ let chain = Chain::from(NamedChain::Mainnet);
 let chain = Chain::from_id(1);
 ```
 
-If the chain `Id` does not match the on-chain configuration, initialization will fail.
+If the chain id does not match the on-chain configuration, initialization will fail.
 
 ```rust
 let registry = Erc20TokenRegistry::<WsProvider>::new(
     String::from("wss://ethereum-rpc.publicnode.com"), 
-    Chain::Id(10) // Incorrect ChainId
+    Chain::from_id(10) // Incorrect ChainId
 );
 let provider = registry.provider().await?; // Error 
 ```
 
-Passing a `ChainConfig` provides granular control over all configuration parameters, including the enforcement of chain `Id` checks.
+Passing a `ChainConfig` provides granular control over all configuration parameters, including the enforcement of chain id checks.
 
 ```rust 
 let chain = Chain::ChainConfig(ChainConfig::default())
