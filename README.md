@@ -32,7 +32,7 @@ In this example, the `abirpc!(Erc20Token)` call generates the `Erc20TokenRegistr
 
 ## Provider management
 
-`ethers-abirpc` supports the following ethers-rs provider types:
+`ethers-abirpc` supports the following `ethers-rs` provider types:
 
 ```rust
 Provider<Ws>
@@ -52,7 +52,7 @@ IpcProvider
 MockProvider
 ```
 
-The crate also supports direct initialization `ethers-rs` providers. This is helpful for applications which do not require ABI interaction.
+The crate also supports direct initialization of providers. This is helpful for applications which do not require ABI interaction.
 
 ```rust
 let provider: WsProvider = AbiProvider::new(
