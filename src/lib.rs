@@ -1,7 +1,7 @@
 pub mod chain;
 pub mod error;
 pub mod named;
-pub mod provider;
+pub mod providers;
 pub mod registry;
 
 pub mod prelude {
@@ -10,6 +10,6 @@ pub mod prelude {
         chain::{Chain, ChainConfig, RetryClientConfig},
         error::Error,
         named::NamedChain,
-        provider::{AbiProvider, AbiProviderTrait},
+        providers::{AbiProvider, AbiProviderTrait},
     };
 }

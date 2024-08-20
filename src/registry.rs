@@ -58,12 +58,14 @@ macro_rules! abirpc {
             M: ::ethers::prelude::Middleware;
 
         #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<$crate::provider::WsProvider>
-            for $abi_registry<$crate::provider::WsProvider>
+        impl $crate::providers::AbiProviderTrait<$crate::providers::WsProvider>
+            for $abi_registry<$crate::providers::WsProvider>
         {
-            async fn provider(&self) -> Result<$crate::provider::WsProvider, $crate::error::Error> {
-                let provider: $crate::provider::WsProvider =
-                    $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
+            async fn provider(
+                &self,
+            ) -> Result<$crate::providers::WsProvider, $crate::error::Error> {
+                let provider: $crate::providers::WsProvider =
+                    $crate::providers::AbiProvider::_new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
 
@@ -72,14 +74,14 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<$crate::provider::IpcProvider>
-            for $abi_registry<$crate::provider::IpcProvider>
+        impl $crate::providers::AbiProviderTrait<$crate::providers::IpcProvider>
+            for $abi_registry<$crate::providers::IpcProvider>
         {
             async fn provider(
                 &self,
-            ) -> Result<$crate::provider::IpcProvider, $crate::error::Error> {
-                let provider: $crate::provider::IpcProvider =
-                    $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
+            ) -> Result<$crate::providers::IpcProvider, $crate::error::Error> {
+                let provider: $crate::providers::IpcProvider =
+                    $crate::providers::AbiProvider::_new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
 
@@ -88,14 +90,14 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<$crate::provider::HttpProvider>
-            for $abi_registry<$crate::provider::HttpProvider>
+        impl $crate::providers::AbiProviderTrait<$crate::providers::HttpProvider>
+            for $abi_registry<$crate::providers::HttpProvider>
         {
             async fn provider(
                 &self,
-            ) -> Result<$crate::provider::HttpProvider, $crate::error::Error> {
-                let provider: $crate::provider::HttpProvider =
-                    $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
+            ) -> Result<$crate::providers::HttpProvider, $crate::error::Error> {
+                let provider: $crate::providers::HttpProvider =
+                    $crate::providers::AbiProvider::_new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
 
@@ -104,14 +106,14 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<$crate::provider::RetryProvider>
-            for $abi_registry<$crate::provider::RetryProvider>
+        impl $crate::providers::AbiProviderTrait<$crate::providers::RetryProvider>
+            for $abi_registry<$crate::providers::RetryProvider>
         {
             async fn provider(
                 &self,
-            ) -> Result<$crate::provider::RetryProvider, $crate::error::Error> {
-                let provider: $crate::provider::RetryProvider =
-                    $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
+            ) -> Result<$crate::providers::RetryProvider, $crate::error::Error> {
+                let provider: $crate::providers::RetryProvider =
+                    $crate::providers::AbiProvider::_new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
 
@@ -120,14 +122,14 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<$crate::provider::MockProvider>
-            for $abi_registry<$crate::provider::MockProvider>
+        impl $crate::providers::AbiProviderTrait<$crate::providers::MockProvider>
+            for $abi_registry<$crate::providers::MockProvider>
         {
             async fn provider(
                 &self,
-            ) -> Result<$crate::provider::MockProvider, $crate::error::Error> {
-                let provider: $crate::provider::MockProvider =
-                    $crate::provider::AbiProvider::mock().provider().await?;
+            ) -> Result<$crate::providers::MockProvider, $crate::error::Error> {
+                let provider: $crate::providers::MockProvider =
+                    $crate::providers::AbiProvider::mock().provider().await?;
 
                 Ok(provider)
             }
