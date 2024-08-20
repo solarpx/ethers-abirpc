@@ -22,7 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider = registry.provider().await?;
     let instance = registry.register(provider, address);
 
-    let _ = instance.decimals().await?; // Query contract abi
+    let _ = instance.decimals().await?; // Query contract
 
     Ok(())
 }
@@ -45,7 +45,7 @@ If the chain id does not match the on-chain configuration, initialization will f
 ```rust
 let registry = Erc20TokenRegistry::<WsProvider>::new(
     String::from("wss://ethereum-rpc.publicnode.com"), 
-    Chain::from_id(10) // Incorrect ChainId
+    Chain::from_id(10) // Incorrect chain id
 );
 let provider = registry.provider().await?; // Error 
 ```
