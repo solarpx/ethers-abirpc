@@ -58,14 +58,11 @@ macro_rules! abirpc {
             M: ::ethers::prelude::Middleware;
 
         #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Ws>>
-            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Ws>>
+        impl $crate::provider::AbiProviderTrait<$crate::provider::WsProvider>
+            for $abi_registry<$crate::provider::WsProvider>
         {
-            async fn provider(
-                &self,
-            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ws>, $crate::error::Error>
-            {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::Ws> =
+            async fn provider(&self) -> Result<$crate::provider::WsProvider, $crate::error::Error> {
+                let provider: $crate::provider::WsProvider =
                     $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
@@ -75,14 +72,13 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
-            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
+        impl $crate::provider::AbiProviderTrait<$crate::provider::IpcProvider>
+            for $abi_registry<$crate::provider::IpcProvider>
         {
             async fn provider(
                 &self,
-            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ipc>, $crate::error::Error>
-            {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::Ipc> =
+            ) -> Result<$crate::provider::IpcProvider, $crate::error::Error> {
+                let provider: $crate::provider::IpcProvider =
                     $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
@@ -92,15 +88,13 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
-        impl
-            $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Http>>
-            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Http>>
+        impl $crate::provider::AbiProviderTrait<$crate::provider::HttpProvider>
+            for $abi_registry<$crate::provider::HttpProvider>
         {
             async fn provider(
                 &self,
-            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Http>, $crate::error::Error>
-            {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::Http> =
+            ) -> Result<$crate::provider::HttpProvider, $crate::error::Error> {
+                let provider: $crate::provider::HttpProvider =
                     $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
                         .provider()
                         .await?;
@@ -110,49 +104,29 @@ macro_rules! abirpc {
         }
 
         #[async_trait::async_trait]
-        impl
-            $crate::provider::AbiProviderTrait<
-                ::ethers::prelude::Provider<
-                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-                >,
-            >
-            for $abi_registry<
-                ::ethers::prelude::Provider<
-                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-                >,
-            >
+        impl $crate::provider::AbiProviderTrait<$crate::provider::RetryProvider>
+            for $abi_registry<$crate::provider::RetryProvider>
         {
             async fn provider(
                 &self,
-            ) -> Result<
-                ::ethers::prelude::Provider<
-                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-                >,
-                $crate::error::Error,
-            > {
-                let provider: ::ethers::prelude::Provider<
-                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-                > = $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
-                    .provider()
-                    .await?;
+            ) -> Result<$crate::provider::RetryProvider, $crate::error::Error> {
+                let provider: $crate::provider::RetryProvider =
+                    $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
+                        .provider()
+                        .await?;
 
                 Ok(provider)
             }
         }
 
         #[async_trait::async_trait]
-        impl
-            $crate::provider::AbiProviderTrait<
-                ::ethers::prelude::Provider<::ethers::prelude::MockProvider>,
-            > for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::MockProvider>>
+        impl $crate::provider::AbiProviderTrait<$crate::provider::MockProvider>
+            for $abi_registry<$crate::provider::MockProvider>
         {
             async fn provider(
                 &self,
-            ) -> Result<
-                ::ethers::prelude::Provider<::ethers::prelude::MockProvider>,
-                $crate::error::Error,
-            > {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::MockProvider> =
+            ) -> Result<$crate::provider::MockProvider, $crate::error::Error> {
+                let provider: $crate::provider::MockProvider =
                     $crate::provider::AbiProvider::mock().provider().await?;
 
                 Ok(provider)

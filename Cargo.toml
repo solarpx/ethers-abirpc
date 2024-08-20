@@ -1,6 +1,6 @@
 [package]
 name = 'ethers-abirpc'
-version = '0.2.1'
+version = '0.3.0'
 edition = '2021'
 license = 'MIT OR Apache-2.0'
 repository = 'https://github.com/solarpx/ethers-abirpc'
@@ -23,6 +23,7 @@ url = '2.4.1'
 async-trait = '0.1.74'
 strum = '0.26.3'
 num_enum = '0.7.3'
+paste = "1.0.15"
 
 [dependencies.tokio]
 version = '1.29.1'
