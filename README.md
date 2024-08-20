@@ -17,19 +17,15 @@ Provider<MockProvider>
 The `abirpc!` macro is implemented as an extension of ethers-rs `abigen!` as shown in the example below.
 
 ```rust
-use ethers::{
-    contract::abigen,
-    providers::{Provider, Ws},
-};
 use ethers_abirpc::prelude::*;
 
 abigen!(Erc20Token, "./abi/Erc20Token.json"); // Path to abi
-abirpc!(Erc20Token, Erc20TokenRegistry);
+abirpc!(Erc20Token);
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let address = address_from!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")?; // WETH
-    let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
+    let registry = Erc20TokenRegistry::<WsProvider>::new(
     	String::from("wss://ethereum-rpc.publicnode.com"), 
     	Chain::from(NamedChain::Mainnet)
     );
@@ -57,7 +53,7 @@ let chain = Chain::Id(1);
 If the chain `Id` does not match the on-chain configuration, initialization will fail.
 
 ```rust
-let registry = Erc20TokenRegistry::<Provider<Ws>>::new(
+let registry = Erc20TokenRegistry::<WsProvider>::new(
 	String::from("wss://ethereum-rpc.publicnode.com"), 
 	Chain::Id(10) // Incorrect ChainId
 );
@@ -75,7 +71,7 @@ let chain = Chain::ChainConfig(ChainConfig::default())
 The crate also includes a wrapper for direct initialization of supported `ethers-rs` provider types. This is helpful for interactions not requiring an ABI.
 
 ```rust
-let provider: Provider<Ws> = AbiProvider::new(
+let provider: WsProvider = AbiProvider::new(
     String::from("wss://ethereum-rpc.publicnode.com"),
     Chain::Id(1),
 )
@@ -96,13 +92,14 @@ ABI files can be located anywhere on the system, and multiple ABIs can be initia
 use ethers_abirpc::prelude::*;
 
 abigen!(Erc20Token, "./abi/Erc20Token.json"); 
-abirpc!(Erc20Token, Erc20TokenRegistry);
+abirpc!(Erc20Token);
 
 abigen!(Erc721Token, "./abi/Erc721Token.json"); 
-abirpc!(Erc721Token, Erc721TokenRegistry);
+abirpc!(Erc721Token);
 ```
 
 ## Release notes
 
-- 0.2.0: Stabilized API. `SemVer` forward compatibility.
+- 0.3.0: Improve macro, imports, and add type aliases for provider types
+- 0.2.x: Stabilized API and add alloy compatible chain implementations
 - 0.1.x: Development versions
