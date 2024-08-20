@@ -4,7 +4,7 @@
 
 ## Overview
 
-The crate defines the `abirpc!` macro along with several other utilities for ethers provider encapsulation. The `abirpc!` macro is implemented as an extension of the `abigen!` macro as shown in the example below.
+The crate defines the `abirpc!` macro along with several other utilities for [`ethers-rs`](https://github.com/gakonst/ethers-rs) provider encapsulation. The `abirpc!` macro is implemented as an extension of the ethers `abigen!` macro as shown in the example below.
 
 ```rust
 use ethers_abirpc::prelude::*;
