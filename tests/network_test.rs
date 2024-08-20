@@ -4,7 +4,7 @@ const TEST_HTTP_PROVIDER: &str = "https://ethereum.publicnode.com";
 
 #[tokio::test]
 async fn test_chain_from_named_chain() -> Result<(), Box<dyn std::error::Error>> {
-    let chain = Chain::from(NamedChain::Mainnet);
+    let chain = Chain::from_named(NamedChain::Mainnet);
 
     let _provider: HttpProvider = AbiProvider::new(TEST_HTTP_PROVIDER.into(), chain)
         .provider()
@@ -23,7 +23,7 @@ async fn test_named_chain_from_chain() -> Result<(), Box<dyn std::error::Error>>
 
 #[tokio::test]
 async fn test_chain_from_chain_id() -> Result<(), Box<dyn std::error::Error>> {
-    let chain = Chain::Id(1);
+    let chain = Chain::from_id(1);
 
     let _provider: HttpProvider = AbiProvider::new(TEST_HTTP_PROVIDER.into(), chain)
         .provider()

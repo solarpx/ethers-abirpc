@@ -2,19 +2,9 @@
 
 `ethers-abirpc` allows users to efficiently manage multiple smart contract instances across multiple blockchains within the same application context via a simple API. 
 
-## Overview 
+## Overview
 
-The crate defines the `abirpc!` macro along with several other utilities for [ethers-rs](https://github.com/gakonst/ethers-rs) provider encapsulation. The following ethers-rs provider types are supported:
-
-```rust
-Provider<Ws>
-Provider<Http>
-Provider<RetryClient<Http>>
-Provider<Ipc>
-Provider<MockProvider>
-```
-
-The `abirpc!` macro is implemented as an extension of ethers-rs `abigen!` as shown in the example below.
+The crate defines the `abirpc!` macro along with several other utilities for ethers provider encapsulation. The `abirpc!` macro is implemented as an extension of the `abigen!` macro as shown in the example below.
 
 ```rust
 use ethers_abirpc::prelude::*;
@@ -38,7 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-Note that the `abigen!` macro generates the rust bindings for the contract ABI, and is required for `abirpc!` to function.
+In this example, the `abirpc!(Erc20Token)` call generates the `Erc20TokenRegistry` type which implements RPC provider encapsulation, and the preceding `abigen!` call generates the underlying `Erc20Token` type which contains the required rust bindings for the contract ABI.
 
 ## Network management
 
@@ -47,7 +37,7 @@ Network implementation is consistent with the [alloy](https://github.com/alloy-r
 ```rust
 let chain = Chain::from(NamedChain::Mainnet);
 // OR
-let chain = Chain::Id(1);
+let chain = Chain::from_id(1);
 ```
 
 If the chain `Id` does not match the on-chain configuration, initialization will fail.
@@ -68,7 +58,27 @@ let chain = Chain::ChainConfig(ChainConfig::default())
 
 ## Provider management
 
-The crate also includes a wrapper for direct initialization of supported `ethers-rs` provider types. This is helpful for interactions not requiring an ABI.
+`ethers-abirpc` supports the following ethers-rs provider types:
+
+```rust
+Provider<Ws>
+Provider<Http>
+Provider<RetryClient<Http>>
+Provider<Ipc>
+Provider<MockProvider>
+```
+
+These types are re-exported by `ethers-abirpc` via the following type aliases so developers do not need to manage underlying `ethers-rs` provider types directly:
+
+```rust
+WsProvider
+HttpProvider
+RetryProvider
+IpcProvider
+MockProvider
+```
+
+The crate also supports direct initialization `ethers-rs` providers. This is helpful for applications which do not require ABI interaction.
 
 ```rust
 let provider: WsProvider = AbiProvider::new(
@@ -103,3 +113,5 @@ abirpc!(Erc721Token);
 - 0.3.0: Improve macro, imports, and add type aliases for provider types
 - 0.2.x: Stabilized API and add alloy compatible chain implementations
 - 0.1.x: Development versions
+
+An [`alloy-abirpc`](https://crates.io/crates/alloy-abirpc) implementation of the `ethers-abirpc` API has also been developed, and efforts have been made to ensure that both libraries share a consistent API. 

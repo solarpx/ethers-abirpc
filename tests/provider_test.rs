@@ -26,9 +26,10 @@ async fn test_ws_wrong_url() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn test_ws_wrong_chain_id() -> Result<(), Box<dyn std::error::Error>> {
-    let provider: Result<WsProvider, _> = AbiProvider::new(TEST_WS_PROVIDER.into(), Chain::Id(10))
-        .provider()
-        .await;
+    let provider: Result<WsProvider, _> =
+        AbiProvider::new(TEST_WS_PROVIDER.into(), Chain::from_id(10))
+            .provider()
+            .await;
 
     assert!(provider.is_err());
 
