@@ -70,7 +70,7 @@ while let Some(block) = stream.next().await {
 
 ## Network management
 
-Network implementation is consistent with the [`alloy`](https://github.com/alloy-rs/alloy) API.
+Network implementation is consistent with the [`alloy-chains`](https://crates.io/crates/alloy-chains) API.
 
 ```rust
 let chain = Chain::from(NamedChain::Mainnet);
