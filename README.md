@@ -83,7 +83,7 @@ The crate also supports direct initialization of providers. This is helpful for 
 ```rust
 let provider: WsProvider = AbiProvider::new(
     String::from("wss://ethereum-rpc.publicnode.com"),
-    Chain::Id(1),
+    Chain::from_id(1),
 )
 .provider()
 .await?;
