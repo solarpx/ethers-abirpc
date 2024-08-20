@@ -28,7 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-In this example, the `abirpc!(Erc20Token)` call generates the `Erc20TokenRegistry` type which implements RPC provider encapsulation, and the preceding `abigen!` call generates the underlying `Erc20Token` type which contains the required rust bindings for the contract ABI.
+In this example, the `abirpc!(Erc20Token)` call generates the `Erc20TokenRegistry` type which implements RPC provider encapsulation, and the preceding `abigen!` call generates the underlying `Erc20Token` type which defines the rust bindings for the contract ABI.
 
 ## Provider management
 
