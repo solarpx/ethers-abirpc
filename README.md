@@ -68,7 +68,7 @@ Provider<Ipc>
 Provider<MockProvider>
 ```
 
-These types are re-exported by `ethers-abirpc` via the following type aliases so developers do not need to manage underlying `ethers-rs` provider types directly.
+These types are re-exported by `ethers-abirpc` via the following type aliases so developers do not need to manage the underlying `ethers-rs` provider types.
 
 ```rust
 WsProvider
@@ -114,4 +114,4 @@ abirpc!(Erc721Token);
 - 0.2.x: Stabilized API and add alloy compatible chain implementations
 - 0.1.x: Development versions
 
-An [`alloy-abirpc`](https://crates.io/crates/alloy-abirpc) implementation of `ethers-abirpc` has also been developed, and efforts have been made to ensure that both libraries share a consistent API. 
+An [`alloy-abirpc`](https://crates.io/crates/alloy-abirpc) implementation of `ethers-abirpc` has also been developed, and efforts have been made to ensure that both libraries share a consistent API.
