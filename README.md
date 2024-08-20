@@ -30,32 +30,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 In this example, the `abirpc!(Erc20Token)` call generates the `Erc20TokenRegistry` type which implements RPC provider encapsulation, and the preceding `abigen!` call generates the underlying `Erc20Token` type which contains the required rust bindings for the contract ABI.
 
-## Network management
-
-Network implementation is consistent with the [`alloy`](https://github.com/alloy-rs/alloy) API.
-
-```rust
-let chain = Chain::from(NamedChain::Mainnet);
-// OR
-let chain = Chain::from_id(1);
-```
-
-If the chain `Id` does not match the on-chain configuration, initialization will fail.
-
-```rust
-let registry = Erc20TokenRegistry::<WsProvider>::new(
-	String::from("wss://ethereum-rpc.publicnode.com"), 
-	Chain::Id(10) // Incorrect ChainId
-);
-let provider = registry.provider().await?; // Error 
-```
-
-Passing a `ChainConfig` provides granular control over all configuration parameters, including the enforcement of chain `Id` checks.
-
-```rust 
-let chain = Chain::ChainConfig(ChainConfig::default())
-```
-
 ## Provider management
 
 `ethers-abirpc` supports the following ethers-rs provider types:
@@ -94,6 +68,32 @@ while let Some(block) = stream.next().await {
 }
 ```
 
+## Network management
+
+Network implementation is consistent with the [`alloy`](https://github.com/alloy-rs/alloy) API.
+
+```rust
+let chain = Chain::from(NamedChain::Mainnet);
+// OR
+let chain = Chain::from_id(1);
+```
+
+If the chain `Id` does not match the on-chain configuration, initialization will fail.
+
+```rust
+let registry = Erc20TokenRegistry::<WsProvider>::new(
+    String::from("wss://ethereum-rpc.publicnode.com"), 
+    Chain::Id(10) // Incorrect ChainId
+);
+let provider = registry.provider().await?; // Error 
+```
+
+Passing a `ChainConfig` provides granular control over all configuration parameters, including the enforcement of chain `Id` checks.
+
+```rust 
+let chain = Chain::ChainConfig(ChainConfig::default())
+```
+
 ## ABI management
 
 ABI files can be located anywhere on the system, and multiple ABIs can be initialized within the same `.rs` file.
@@ -110,7 +110,7 @@ abirpc!(Erc721Token);
 
 ## Release notes
 
-- 0.3.0: Improve macro, imports, and add type aliases for provider types
+- 0.3.0: Improve macros, imports, and add type aliases for provider types
 - 0.2.x: Stabilized API and add alloy compatible chain implementations
 - 0.1.x: Development versions
 
