@@ -30,6 +30,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 In this example, the `abirpc!(Erc20Token)` call generates the `Erc20TokenRegistry` type which implements RPC provider encapsulation, and the preceding `abigen!` call generates the underlying `Erc20Token` type which defines the rust bindings for the contract ABI.
 
+## Network management
+
+Network implementation is consistent with the [`alloy-chains`](https://crates.io/crates/alloy-chains) API.
+
+```rust
+let chain = Chain::from(NamedChain::Mainnet);
+// OR
+let chain = Chain::from_id(1);
+```
+
+If the chain id does not match the on-chain configuration, initialization will fail.
+
+```rust
+let registry = Erc20TokenRegistry::<WsProvider>::new(
+    String::from("wss://ethereum-rpc.publicnode.com"), 
+    Chain::from_id(10) // Incorrect ChainId
+);
+let provider = registry.provider().await?; // Error 
+```
+
+Passing a `ChainConfig` provides granular control over all configuration parameters, including the enforcement of chain id checks.
+
+```rust 
+let chain = Chain::ChainConfig(ChainConfig::default())
+```
+
 ## Provider management
 
 `ethers-abirpc` supports the following `ethers-rs` provider types:
@@ -66,32 +92,6 @@ let mut stream = provider.subscribe_blocks().await?;
 while let Some(block) = stream.next().await {
     println!("{:?}", block)
 }
-```
-
-## Network management
-
-Network implementation is consistent with the [`alloy-chains`](https://crates.io/crates/alloy-chains) API.
-
-```rust
-let chain = Chain::from(NamedChain::Mainnet);
-// OR
-let chain = Chain::from_id(1);
-```
-
-If the chain id does not match the on-chain configuration, initialization will fail.
-
-```rust
-let registry = Erc20TokenRegistry::<WsProvider>::new(
-    String::from("wss://ethereum-rpc.publicnode.com"), 
-    Chain::from_id(10) // Incorrect ChainId
-);
-let provider = registry.provider().await?; // Error 
-```
-
-Passing a `ChainConfig` provides granular control over all configuration parameters, including the enforcement of chain id checks.
-
-```rust 
-let chain = Chain::ChainConfig(ChainConfig::default())
 ```
 
 ## ABI management
