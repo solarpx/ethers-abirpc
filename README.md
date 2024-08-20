@@ -40,7 +40,7 @@ let chain = Chain::from(NamedChain::Mainnet);
 let chain = Chain::from_id(1);
 ```
 
-If the chain id does not match the on-chain configuration, initialization will fail.
+Initialization will fail if the chain id does not match the on-chain configuration.
 
 ```rust
 let registry = Erc20TokenRegistry::<WsProvider>::new(
@@ -58,7 +58,7 @@ let chain = Chain::ChainConfig(ChainConfig::default())
 
 ## Provider management
 
-`ethers-abirpc` supports the following `ethers-rs` provider types:
+`ethers-abirpc` supports the following `ethers-rs` provider types.
 
 ```rust
 Provider<Ws>
@@ -68,7 +68,7 @@ Provider<Ipc>
 Provider<MockProvider>
 ```
 
-These types are re-exported by `ethers-abirpc` via the following type aliases so developers do not need to manage underlying `ethers-rs` provider types directly:
+These types are re-exported by `ethers-abirpc` via the following type aliases so developers do not need to manage underlying `ethers-rs` provider types directly.
 
 ```rust
 WsProvider
@@ -78,7 +78,7 @@ IpcProvider
 MockProvider
 ```
 
-The crate also supports direct initialization of providers. This is helpful for applications which do not require ABI interaction.
+Direct initialization of providers is also supported. This is helpful for applications which do not require ABI interaction.
 
 ```rust
 let provider: WsProvider = AbiProvider::new(
