@@ -1,23 +1,14 @@
-use {
-    ethers::{
-        contract::abigen,
-        middleware::SignerMiddleware,
-        providers::{Middleware, MockProvider, Provider},
-        signers::{LocalWallet, Signer},
-        types::U256,
-    },
-    ethers_abirpc::prelude::*,
-};
+use ethers_abirpc::prelude::*;
 
 abigen!(Erc20Token, "./tests/abi/Erc20Token.json");
-abirpc!(Erc20Token, Erc20TokenRegistry);
+abirpc!(Erc20Token);
 
 const WETH_ADDRESS: &str = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 const LOCAL_WALLET: &str = "380eb0f3d505f087e438eca80bc4df9a7faa24f868e69fc0440261a0fc0567dc";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let registry = Erc20TokenRegistry::<Provider<MockProvider>>::mock();
+    let registry = Erc20TokenRegistry::<MockProvider>::mock();
 
     let weth_address = address_from!(WETH_ADDRESS)?;
 
