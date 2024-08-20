@@ -6,7 +6,7 @@ use {
     async_trait::async_trait,
     ethers::{
         providers::{
-            Http, HttpRateLimitRetryPolicy, Ipc, Middleware, MockProvider, Provider, RetryClient,
+            Http, HttpRateLimitRetryPolicy, Ipc, Middleware, Provider, RetryClient,
             RetryClientBuilder, Ws,
         },
         types::U256,
@@ -14,6 +14,24 @@ use {
     std::{path::Path, time::Duration},
     url::Url,
 };
+
+pub type HttpTransport = Http;
+
+pub type HttpProvider = Provider<HttpTransport>;
+
+pub type WsTransport = Ws;
+
+pub type WsProvider = Provider<WsTransport>;
+
+pub type IpcTransport = Ipc;
+
+pub type IpcProvider = Provider<IpcTransport>;
+
+pub type RetryTransport = RetryClient<Http>;
+
+pub type RetryProvider = Provider<RetryTransport>;
+
+pub type MockProvider = Provider<ethers::providers::MockProvider>;
 
 #[async_trait]
 pub trait AbiProviderTrait<M>
@@ -67,12 +85,12 @@ macro_rules! assert_chain_id {
 }
 
 #[async_trait]
-impl AbiProviderTrait<Provider<Ws>> for AbiProvider {
-    async fn provider(&self) -> Result<Provider<Ws>, Error> {
+impl AbiProviderTrait<WsProvider> for AbiProvider {
+    async fn provider(&self) -> Result<WsProvider, Error> {
         match &self.url {
             Some(url) => {
                 let url = Url::parse(url)?;
-                let provider = Provider::<Ws>::connect(url).await?;
+                let provider = Provider::<WsTransport>::connect(url).await?;
                 assert_chain_id!(self.chain, provider);
                 Ok(provider)
             }
@@ -82,11 +100,11 @@ impl AbiProviderTrait<Provider<Ws>> for AbiProvider {
 }
 
 #[async_trait]
-impl AbiProviderTrait<Provider<Ipc>> for AbiProvider {
-    async fn provider(&self) -> Result<Provider<Ipc>, Error> {
+impl AbiProviderTrait<IpcProvider> for AbiProvider {
+    async fn provider(&self) -> Result<IpcProvider, Error> {
         match &self.url {
             Some(url) => {
-                let provider = Provider::<Ipc>::connect_ipc(Path::new(&url)).await?;
+                let provider = Provider::<IpcTransport>::connect_ipc(Path::new(&url)).await?;
                 assert_chain_id!(self.chain, provider);
                 Ok(provider)
             }
@@ -96,12 +114,12 @@ impl AbiProviderTrait<Provider<Ipc>> for AbiProvider {
 }
 
 #[async_trait]
-impl AbiProviderTrait<Provider<Http>> for AbiProvider {
-    async fn provider(&self) -> Result<Provider<Http>, Error> {
+impl AbiProviderTrait<HttpProvider> for AbiProvider {
+    async fn provider(&self) -> Result<HttpProvider, Error> {
         match &self.url {
             Some(url) => {
                 let url = Url::parse(url)?;
-                let provider = Provider::<Http>::new(Http::new(url));
+                let provider = Provider::<HttpTransport>::new(Http::new(url));
                 assert_chain_id!(self.chain, provider);
                 Ok(provider)
             }
@@ -111,8 +129,8 @@ impl AbiProviderTrait<Provider<Http>> for AbiProvider {
 }
 
 #[async_trait]
-impl AbiProviderTrait<Provider<RetryClient<Http>>> for AbiProvider {
-    async fn provider(&self) -> Result<Provider<RetryClient<Http>>, Error> {
+impl AbiProviderTrait<RetryProvider> for AbiProvider {
+    async fn provider(&self) -> Result<RetryProvider, Error> {
         match &self.url {
             Some(url) => {
                 let url = Url::parse(url)?;
@@ -137,8 +155,8 @@ impl AbiProviderTrait<Provider<RetryClient<Http>>> for AbiProvider {
 }
 
 #[async_trait]
-impl AbiProviderTrait<Provider<MockProvider>> for AbiProvider {
-    async fn provider(&self) -> Result<Provider<MockProvider>, Error> {
+impl AbiProviderTrait<MockProvider> for AbiProvider {
+    async fn provider(&self) -> Result<MockProvider, Error> {
         match &self.url {
             Some(_) => Err(Error::Error(String::from("MockProvider url is not None"))),
             None => {

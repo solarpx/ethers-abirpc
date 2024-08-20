@@ -51,168 +51,147 @@ impl<C> AbiRegistry<C> {
 
 #[macro_export]
 macro_rules! abirpc {
-    ($abi:ident, $abi_registry: ident) => {
-        #[derive(Debug)]
-        pub struct $abi_registry<M>($crate::registry::AbiRegistry<$abi<M>>)
-        where
-            M: ::ethers::prelude::Middleware;
+    ($abi:ident) => {
+        paste::paste! {
 
-        #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Ws>>
-            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Ws>>
-        {
-            async fn provider(
-                &self,
-            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ws>, $crate::error::Error>
+            #[derive(Debug)]
+            pub struct [<$abi Registry>]<M>($crate::registry::AbiRegistry<$abi<M>>)
+            where
+                M: ::ethers::prelude::Middleware;
+
+            #[async_trait::async_trait]
+            impl $crate::providers::AbiProviderTrait<$crate::providers::WsProvider>
+                for [<$abi Registry>]<$crate::providers::WsProvider>
             {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::Ws> =
-                    $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
-                        .provider()
-                        .await?;
+                async fn provider(
+                    &self,
+                ) -> Result<$crate::providers::WsProvider, $crate::error::Error> {
+                    let provider: $crate::providers::WsProvider =
+                        $crate::providers::AbiProvider::_new(self.0.url.clone(), self.0.chain)
+                            .provider()
+                            .await?;
 
-                Ok(provider)
+                    Ok(provider)
+                }
             }
-        }
 
-        #[async_trait::async_trait]
-        impl $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
-            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Ipc>>
-        {
-            async fn provider(
-                &self,
-            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Ipc>, $crate::error::Error>
+            #[async_trait::async_trait]
+            impl $crate::providers::AbiProviderTrait<$crate::providers::IpcProvider>
+                for [<$abi Registry>]<$crate::providers::IpcProvider>
             {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::Ipc> =
-                    $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
-                        .provider()
-                        .await?;
+                async fn provider(
+                    &self,
+                ) -> Result<$crate::providers::IpcProvider, $crate::error::Error> {
+                    let provider: $crate::providers::IpcProvider =
+                        $crate::providers::AbiProvider::_new(self.0.url.clone(), self.0.chain)
+                            .provider()
+                            .await?;
 
-                Ok(provider)
+                    Ok(provider)
+                }
             }
-        }
 
-        #[async_trait::async_trait]
-        impl
-            $crate::provider::AbiProviderTrait<::ethers::prelude::Provider<::ethers::prelude::Http>>
-            for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::Http>>
-        {
-            async fn provider(
-                &self,
-            ) -> Result<::ethers::prelude::Provider<::ethers::prelude::Http>, $crate::error::Error>
+            #[async_trait::async_trait]
+            impl $crate::providers::AbiProviderTrait<$crate::providers::HttpProvider>
+                for [<$abi Registry>]<$crate::providers::HttpProvider>
             {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::Http> =
-                    $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
-                        .provider()
-                        .await?;
+                async fn provider(
+                    &self,
+                ) -> Result<$crate::providers::HttpProvider, $crate::error::Error> {
+                    let provider: $crate::providers::HttpProvider =
+                        $crate::providers::AbiProvider::_new(self.0.url.clone(), self.0.chain)
+                            .provider()
+                            .await?;
 
-                Ok(provider)
-            }
-        }
-
-        #[async_trait::async_trait]
-        impl
-            $crate::provider::AbiProviderTrait<
-                ::ethers::prelude::Provider<
-                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-                >,
-            >
-            for $abi_registry<
-                ::ethers::prelude::Provider<
-                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-                >,
-            >
-        {
-            async fn provider(
-                &self,
-            ) -> Result<
-                ::ethers::prelude::Provider<
-                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-                >,
-                $crate::error::Error,
-            > {
-                let provider: ::ethers::prelude::Provider<
-                    ::ethers::prelude::RetryClient<::ethers::prelude::Http>,
-                > = $crate::provider::AbiProvider::_new(self.0.url.clone(), self.0.chain)
-                    .provider()
-                    .await?;
-
-                Ok(provider)
-            }
-        }
-
-        #[async_trait::async_trait]
-        impl
-            $crate::provider::AbiProviderTrait<
-                ::ethers::prelude::Provider<::ethers::prelude::MockProvider>,
-            > for $abi_registry<::ethers::prelude::Provider<::ethers::prelude::MockProvider>>
-        {
-            async fn provider(
-                &self,
-            ) -> Result<
-                ::ethers::prelude::Provider<::ethers::prelude::MockProvider>,
-                $crate::error::Error,
-            > {
-                let provider: ::ethers::prelude::Provider<::ethers::prelude::MockProvider> =
-                    $crate::provider::AbiProvider::mock().provider().await?;
-
-                Ok(provider)
-            }
-        }
-
-        impl<M> $abi_registry<M>
-        where
-            M: ::ethers::prelude::Middleware,
-        {
-            pub fn new(url: String, chain: $crate::chain::Chain) -> Self {
-                let registry = $crate::registry::AbiRegistry::<$abi<M>>::new(url, chain);
-                Self(registry)
+                    Ok(provider)
+                }
             }
 
-            pub fn mock() -> Self {
-                let registry = $crate::registry::AbiRegistry::<$abi<M>>::mock();
-                Self(registry)
+            #[async_trait::async_trait]
+            impl $crate::providers::AbiProviderTrait<$crate::providers::RetryProvider>
+                for [<$abi Registry>]<$crate::providers::RetryProvider>
+            {
+                async fn provider(
+                    &self,
+                ) -> Result<$crate::providers::RetryProvider, $crate::error::Error> {
+                    let provider: $crate::providers::RetryProvider =
+                        $crate::providers::AbiProvider::_new(self.0.url.clone(), self.0.chain)
+                            .provider()
+                            .await?;
+
+                    Ok(provider)
+                }
             }
 
-            pub fn register(&self, provider: M, address: ::ethers::prelude::Address) -> $abi<M> {
-                if !self.0.entry_exists(address) {
-                    let instance = $abi::new(address, provider.into());
-                    self.0.add_entry(address, instance)
+            #[async_trait::async_trait]
+            impl $crate::providers::AbiProviderTrait<$crate::providers::MockProvider>
+                for [<$abi Registry>]<$crate::providers::MockProvider>
+            {
+                async fn provider(
+                    &self,
+                ) -> Result<$crate::providers::MockProvider, $crate::error::Error> {
+                    let provider: $crate::providers::MockProvider =
+                        $crate::providers::AbiProvider::mock().provider().await?;
+
+                    Ok(provider)
+                }
+            }
+
+            impl<M> [<$abi Registry>]<M>
+            where
+                M: ::ethers::prelude::Middleware,
+            {
+                pub fn new(url: String, chain: $crate::chain::Chain) -> Self {
+                    let registry = $crate::registry::AbiRegistry::<$abi<M>>::new(url, chain);
+                    Self(registry)
                 }
 
-                let clone_lock = std::sync::Arc::clone(&self.0.registry);
-                let registry = clone_lock.read().expect("Registry RwLock poisoned!");
-                let instance = registry.get(&address).unwrap().clone();
-                drop(registry);
+                pub fn mock() -> Self {
+                    let registry = $crate::registry::AbiRegistry::<$abi<M>>::mock();
+                    Self(registry)
+                }
 
-                instance
+                pub fn register(&self, provider: M, address: ::ethers::prelude::Address) -> $abi<M> {
+                    if !self.0.entry_exists(address) {
+                        let instance = $abi::new(address, provider.into());
+                        self.0.add_entry(address, instance)
+                    }
+
+                    let clone_lock = std::sync::Arc::clone(&self.0.registry);
+                    let registry = clone_lock.read().expect("Registry RwLock poisoned!");
+                    let instance = registry.get(&address).unwrap().clone();
+                    drop(registry);
+
+                    instance
+                }
+
+                pub fn chain(&self) -> Option<$crate::chain::Chain> {
+                    self.0.chain
+                }
             }
 
-            pub fn chain(&self) -> Option<$crate::chain::Chain> {
-                self.0.chain
-            }
-        }
-
-        impl<M> $abi<M>
-        where
-            M: ::ethers::prelude::Middleware,
-        {
-            pub async fn get_logs<E>(
-                &self,
-                from_block: ::ethers::prelude::BlockNumber,
-                to_block: ::ethers::prelude::BlockNumber,
-            ) -> Result<Vec<E>, $crate::error::Error>
+            impl<M> $abi<M>
             where
-                E: ethers::prelude::EthEvent + std::fmt::Debug,
+                M: ::ethers::prelude::Middleware,
             {
-                let res = self
-                    .event::<E>()
-                    .address(ethers::prelude::ValueOrArray::Value(self.address()))
-                    .from_block(from_block)
-                    .to_block(to_block)
-                    .query()
-                    .await?;
+                pub async fn get_logs<E>(
+                    &self,
+                    from_block: ::ethers::prelude::BlockNumber,
+                    to_block: ::ethers::prelude::BlockNumber,
+                ) -> Result<Vec<E>, $crate::error::Error>
+                where
+                    E: ethers::prelude::EthEvent + std::fmt::Debug,
+                {
+                    let res = self
+                        .event::<E>()
+                        .address(ethers::prelude::ValueOrArray::Value(self.address()))
+                        .from_block(from_block)
+                        .to_block(to_block)
+                        .query()
+                        .await?;
 
-                Ok(res)
+                    Ok(res)
+                }
             }
         }
     };

@@ -1,4 +1,4 @@
-use ethers::prelude::Abigen;
+use ethers_abirpc::prelude::*;
 
 #[tokio::test]
 async fn test_abigen() -> Result<(), Box<dyn std::error::Error>> {

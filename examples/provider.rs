@@ -1,11 +1,8 @@
-use {
-    ethers::providers::{Middleware, Provider, StreamExt, Ws},
-    ethers_abirpc::prelude::*,
-};
+use ethers_abirpc::prelude::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let provider: Provider<Ws> = AbiProvider::new(
+    let provider: WsProvider = AbiProvider::new(
         String::from("wss://polygon-bor-rpc.publicnode.com"),
         Chain::from(NamedChain::Polygon),
     )

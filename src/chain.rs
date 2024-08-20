@@ -34,6 +34,12 @@ pub enum Chain {
     ChainConfig(ChainConfig),
 }
 
+impl From<u64> for Chain {
+    fn from(id: u64) -> Self {
+        Self::Id(id)
+    }
+}
+
 impl From<NamedChain> for Chain {
     fn from(named: NamedChain) -> Self {
         Self::Id(named as u64)
@@ -48,6 +54,10 @@ impl Chain {
         }
     }
 
+    pub fn from_id(id: u64) -> Self {
+        Chain::from(id)
+    }
+
     pub fn named(&self) -> Option<NamedChain> {
         match self {
             Chain::Id(chain_id) => NamedChain::try_from(*chain_id)
@@ -57,6 +67,10 @@ impl Chain {
                 .map_err(Error::NamedChainError)
                 .ok(),
         }
+    }
+
+    pub fn from_named(named: NamedChain) -> Self {
+        Chain::from(named)
     }
 
     pub fn retry_client_config(&self) -> RetryClientConfig {
