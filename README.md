@@ -32,7 +32,7 @@ In this example, the `abirpc!(Erc20Token)` call generates the `Erc20TokenRegistr
 
 ## Network management
 
-Network implementation is consistent with the [alloy](https://github.com/alloy-rs/alloy) API.
+Network implementation is consistent with the [`alloy`](https://github.com/alloy-rs/alloy) API.
 
 ```rust
 let chain = Chain::from(NamedChain::Mainnet);
