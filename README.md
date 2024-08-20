@@ -50,7 +50,7 @@ let registry = Erc20TokenRegistry::<WsProvider>::new(
 let provider = registry.provider().await?; // Error 
 ```
 
-Passing a `ChainConfig` provides granular control over all configuration parameters, including the enforcement of chain id checks.
+Passing a `ChainConfig` struct provides granular control over all configuration parameters, including the enforcement of chain id checks.
 
 ```rust 
 let chain = Chain::ChainConfig(ChainConfig::default())
